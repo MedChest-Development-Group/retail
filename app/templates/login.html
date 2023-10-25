@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1>Login Page</h1>
+    <form action="{{url_for('auth')}}">
+        <label for="user">Username:</label>
+        <input type="username" name="user">
+        <label for="pass">Password:</label>
+        <input type="password" name="pass">
+        <input type="submit" value="Sign Up">
+    </form>
+</div>
+{% endblock %}

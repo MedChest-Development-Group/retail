@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1>Create User</h1>
+    <form action="{{url_for('create_user')}}">
+        <input type="submit" value="Create User">
+    </form>
+</div>
+{% endblock %}
