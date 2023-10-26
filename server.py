@@ -1,10 +1,15 @@
 from flask import Flask,request,render_template
+import threading
 import sqlite3
 import hashlib
 
-# Flask object setup
-app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
 
+#  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗ 
+# ██╔════╝ ██║     ██╔═══██╗██╔══██╗██╔══██╗██║         ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
+# ██║  ███╗██║     ██║   ██║██████╔╝███████║██║         ███████╗█████╗     ██║   ██║   ██║██████╔╝
+# ██║   ██║██║     ██║   ██║██╔══██╗██╔══██║██║         ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝ 
+# ╚██████╔╝███████╗╚██████╔╝██████╔╝██║  ██║███████╗    ███████║███████╗   ██║   ╚██████╔╝██║     
+#  ╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝     
 
 # User Database Initialization
 users_connection = sqlite3.connect("users.db", check_same_thread=False)
@@ -22,23 +27,29 @@ CREATE TABLE IF NOT EXISTS users (
 users_connection.commit()
 users_cursor.close()
 
+
+
+
+
+
+
+
+
+
+
+# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗ 
+# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝ 
+# ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
+# ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║         ██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
+# ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
+# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝     
+
+
+app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+
 @app.route('/', methods=["GET"])
 def base_page():
     return render_template('login.html')
-
-
-@app.route('/admin_page', methods=["GET"])
-def admin_page():
-    return render_template('admin/create_user.html')
-
-@app.route('/create_user', methods=["GET"])
-def create_user():
-    users_cursor = users_connection.cursor()
-    query = f'INSERT INTO users(id,first_name,last_name,user_type,username,password) VALUES (NULL,"Test","User","client","tuser123","{hashlib.sha256(str.encode("mypassword"+"Alittlebitofsaltandpepper.")).hexdigest()}")'
-    users_connection.execute(query)
-    users_connection.commit()
-    users_cursor.close()
-    return render_template('admin/dashboard.html')
 
 
 @app.route('/auth', methods=["GET"])
@@ -56,5 +67,73 @@ def auth():
         else:
             return render_template('company/home.html')
 
+@app.route('/city', methods=["GET"])
+def city():
+    return render_template('city/home.html')
+
+@app.route('/company', methods=["GET"])
+def company():
+    return render_template('company/home.html')
+
+
+
+
+
+
+
+#  █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗
+# ██╔══██╗██╔══██╗████╗ ████║██║████╗  ██║
+# ███████║██║  ██║██╔████╔██║██║██╔██╗ ██║
+# ██╔══██║██║  ██║██║╚██╔╝██║██║██║╚██╗██║
+# ██║  ██║██████╔╝██║ ╚═╝ ██║██║██║ ╚████║
+# ╚═╝  ╚═╝╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝   
+
+
+appAdmin = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+
+
+@appAdmin.route('/', methods=["GET"])
+def admin_page():
+    return render_template('admin/dashboard.html')
+
+@appAdmin.route('/create_user', methods=["GET"])
+def create_user():
+    users_cursor = users_connection.cursor()
+    query = f'INSERT INTO users(id,first_name,last_name,user_type,username,password) VALUES (NULL,"Test","User","client","tuser123","{hashlib.sha256(str.encode("mypassword"+"Alittlebitofsaltandpepper.")).hexdigest()}")'
+    users_connection.execute(query)
+    users_connection.commit()
+    users_cursor.close()
+    return admin_page()
+
+
+
+
+
+
+
+
+
+
+
+# ██╗    ██╗███████╗██████╗     ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ 
+# ██║    ██║██╔════╝██╔══██╗    ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗
+# ██║ █╗ ██║█████╗  ██████╔╝    ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝   
+# ██║███╗██║██╔══╝  ██╔══██╗    ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗  
+# ╚███╔███╔╝███████╗██████╔╝    ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║
+#  ╚══╝╚══╝ ╚══════╝╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ 
+
+def public_page():
+    app.run(debug=False, port=5000)
+def admin_page():
+    appAdmin.run(debug=False, port=8123)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    threads = []
+    threads.append(threading.Thread(target=public_page))
+    threads.append(threading.Thread(target=admin_page))
+
+    for i in threads:
+        i.start()
+    for i in threads:
+        i.join()
+    
