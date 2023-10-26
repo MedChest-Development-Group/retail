@@ -3,7 +3,8 @@ import sqlite3
 import hashlib
 
 # Flask object setup
-app = Flask(__name__,template_folder='app/templates')
+app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+
 
 # User Database Initialization
 users_connection = sqlite3.connect("users.db", check_same_thread=False)
@@ -54,8 +55,6 @@ def auth():
             return render_template('city/home.html')
         else:
             return render_template('company/home.html')
-
-
 
 if __name__ == "__main__":
     app.run(debug=False)

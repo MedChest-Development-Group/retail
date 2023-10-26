@@ -1,7 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
-    <h1>City Page</h1>
-</div>
+<head>
+    <meta charset="utf-8" />
+    <title> {{ customer_name }} Homepage </title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/client.css') }}">
+    <meta name="description" content="My retail strategies page" />
+</head>
+<body>
+    <h1>{{ customer_name }} Homepage</h1>
+    <!-- Banner here -->
+    <div class="top-container">
+        <div class="data-left">
+            <!-- Imported data -->
+            <h3>Data Imported</h3>
+        </div>
+        <div class="data-right">
+            <!-- Data tutorials -->
+            <h3>Data Tutorials</h3>
+
+        </div>
+    </div>
+    <div class="middle-container">
+        <div class="data-left ">
+            <!-- Retailer progress -->
+            
+        </div>
+        <div class="data-right ">
+            <!-- PDF stuff, marketing material -->
+
+        </div>
+    </div>
+    <div class="bottom-container">
+        <div class="data-left ">
+            <!-- Should be messenger -->
+            
+        </div>
+        <div class="data-right ">
+            <!-- Should be tableau or graph visuals -->
+            
+        </div>
+    </div>
+</body>
 {% endblock %}
