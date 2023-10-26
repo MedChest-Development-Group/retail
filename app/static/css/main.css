@@ -1,4 +1,7 @@
 :root {}
+body{
+    background-color: #97999a
+}
 
 .center {
     text-align: center;
@@ -37,3 +40,59 @@ input[type=submit] {
 input[type=submit]:hover {
     background-color: #45a049;
 }
+/* Client Selection Tools Container */
+.client-selection-container {
+    padding-inline:5%;
+    background-clip: content-box;
+    display: flex;
+    min-width: 100%;
+    background-color: whitesmoke;
+}
+
+/* Client Container Where Graphs Will Be Shown */
+
+.client-container {
+    padding: 1.5%;
+    background-clip: content-box;
+    display: grid;
+    min-height:75%;
+    height: 150%;
+    /* min-width: 100%; */
+    background-color: whitesmoke;
+}
+
+/* Each Client Horizontal Container */
+.client-placeholder-horizontal-container {
+    /* padding-inline:5%; */
+    background-clip: content-box;
+    width:inherit;
+    /* max-width: 50%; */
+    display: flex;
+    background-color: whitesmoke;
+}
+
+/* All Placeholder Containers */
+.client-placeholder-container {
+    padding: 1.5%;
+    /* width: 100%; */
+    /* background-clip: content-box; */
+    /* min-width: 100%; */
+    display: inline-grid;
+    /* max-width: fit-content; */
+    background-color: whitesmoke;
+}
+
+/* Each Placeholder Itself */
+.placeholder {
+    background-color: grey;
+    width: 50%;
+    position: relative;
+    /* padding: 20%; */
+    /* padding-top:5%; */
+    /* padding-bottom:5%; */
+    /* background-clip: content-box;  */
+    /* display: flex; */
+    margin:1%;
+    /* max-width: max-content; */
+}
+  
