@@ -1,1 +1,1 @@
-# retail
+# retail strategies
