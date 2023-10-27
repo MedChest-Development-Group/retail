@@ -12,13 +12,39 @@
 <body>
     <div>
         <h1 class="center">Homepage Login</h1>
-        <form class="login-form center" action="{{url_for('auth')}}">
+        <form class="login-form center">
             <label for="user">Username:</label>
-            <input type="username" name="user">
+            <input type="username" name="user" id="username">
             <label for="pass">Password:</label>
-            <input type="password" name="pass">
-            <input type="submit" value="Log In">
+            <input type="password" name="pass" id="password">
+            <button type="button" id="loginButton">Log In</button>
         </form>
     </div>
 </body>
+
+<script>
+    document.getElementById('loginButton').addEventListener('click', function() {
+        var loginJSON = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        };
+        var loginData = JSON.stringify(loginJSON);
+        fetch("http://127.0.0.1:5000/auth", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: loginData
+        })
+        .then(response => response.json()) // You can handle the server's response here
+        .then(data => {
+            // Handle the response from the server, e.g., display a success message or redirect to a new page.
+            window.location = data.window;
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch.
+            console.error('Error:', error);
+        });
+    });
+</script>
 {% endblock %}

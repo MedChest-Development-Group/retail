@@ -1,4 +1,5 @@
-from flask import Flask,request,render_template
+from flask import Flask,request,render_template,redirect,url_for
+from flask_cors import CORS
 import threading
 import sqlite3
 import hashlib
@@ -46,26 +47,31 @@ users_cursor.close()
 
 
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+CORS(app)
 
 @app.route('/', methods=["GET"])
 def base_page():
     return render_template('login.html')
 
 
-@app.route('/auth', methods=["GET"])
+@app.route('/auth', methods=["POST"])
 def auth():
     users_cursor = users_connection.cursor()
-    password = request.args.get('pass')
-    username = request.args.get('user')
-    query = f'SELECT user_type FROM users WHERE username = "{username}" AND password = "{hashlib.sha256(str.encode(password+"Alittlebitofsaltandpepper.")).hexdigest()}"'
+    password = request.get_json().get('password')
+    username = request.get_json().get('username')
+    print(password)
+    print(username)
+    query = f'SELECT user_type FROM users WHERE username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"'
     query_results=users_cursor.execute(query).fetchall()
     users_cursor.close()
-    # print(query_results)
-    if(len(query_results) > 0):
+    print(query_results)
+    if(query_results):
         if(query_results[0][0] == "client"):
-            return render_template('city/home.html')
+            return {'window': 'city'}, 200
         else:
-            return render_template('company/home.html')
+            return {'window': 'company'}, 200
+    else:
+        return {'window': 'failed_auth'}, 200
 
 @app.route('/city', methods=["GET"])
 def city():
@@ -74,6 +80,10 @@ def city():
 @app.route('/company', methods=["GET"])
 def company():
     return render_template('company/home.html')
+
+@app.route('/failed_auth', methods=["GET"])
+def failed_auth():
+    return render_template('error/failed_auth.html')
 
 
 
