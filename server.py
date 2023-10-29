@@ -1,8 +1,9 @@
-from flask import Flask,request,render_template,redirect,url_for
+from flask import Flask,request,render_template,redirect,url_for,session
 from flask_cors import CORS
 import threading
 import sqlite3
 import hashlib
+import os
 
 
 #  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗ 
@@ -47,6 +48,10 @@ users_cursor.close()
 
 
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+# This allows you to see HTML/CSS changes when you reload the page when you're running and editing the app locally
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+# Configure app to support user sessions
+app.secret_key = os.urandom(32)
 CORS(app)
 
 @app.route('/', methods=["GET"])
@@ -66,12 +71,18 @@ def auth():
     users_cursor.close()
     print(query_results)
     if(query_results):
+        session["username"] = username  # set user as logged in
         if(query_results[0][0] == "client"):
             return {'window': 'city'}, 200
         else:
             return {'window': 'company'}, 200
     else:
         return {'window': 'failed_auth'}, 200
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    session.clear()
+    return redirect("/")
 
 @app.route('/city', methods=["GET"])
 def city():
