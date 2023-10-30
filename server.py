@@ -144,9 +144,9 @@ def create_user():
 #  ╚══╝╚══╝ ╚══════╝╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ 
 
 def public_page():
-    app.run(debug=False, port=5000)
+    app.run(debug=True, port=5000)
 def admin_page():
-    appAdmin.run(debug=False, port=8123)
+    appAdmin.run(debug=True, port=8123)
 
 if __name__ == "__main__":
     threads = []
