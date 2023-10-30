@@ -15,13 +15,3 @@ python server.py
 ```
 
 Open `localhost:5000` or `127.0.0.1:5000` in your browser
-
-## Test users
-
-Test User (client)
-Username: tuser123
-Password: mypassword
-
-Test User (admin)
-Username: tadmin123
-Password: mypassword
