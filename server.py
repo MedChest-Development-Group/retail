@@ -3,9 +3,11 @@ from flask_cors import CORS
 import threading
 import sqlite3
 import hashlib
-import datetime
+from datetime import datetime
 import time
 import os
+import signal
+import sys
 
 
 #  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗ 
@@ -45,8 +47,9 @@ CREATE TABLE IF NOT EXISTS tokens (
 tokens_connection.commit()
 tokens_cursor.close()
 
-
-
+# Configurable Session Length, in Seconds
+SESSION_LENGTH = 60
+threads = []
 
 
 
@@ -76,49 +79,68 @@ def auth():
     users_cursor = users_connection.cursor()
     password = request.get_json().get('password')
     username = request.get_json().get('username')
-    print(password)
-    print(username)
+    # print(password)
+    # print(username)
     query = f'SELECT user_type FROM users WHERE username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"'
     query_results=users_cursor.execute(query).fetchall()
     users_cursor.close()
-    print(query_results)
-    if(query_results):
+    # print(query_results)
+    if(len(query_results) > 0):
         timestamp = (datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()
-        token = hashlib.sha256(timestamp).hexdigest()
+        token = hashlib.sha256(str.encode(str(timestamp))).hexdigest()
         session["token"] = token
 
         tokens_cursor = tokens_connection.cursor()
-        query = f'INSERT INTO tokens(token,expire_date) VALUES ({token}, {timestamp+3600})'
+        query = f'INSERT INTO tokens(token,expire_date) VALUES ("{token}", {timestamp+SESSION_LENGTH})'
         tokens_connection.execute(query)
         tokens_connection.commit()
         tokens_cursor.close()
 
         if(query_results[0][0] == "client"):
+            session["type"] = "city"
             return {'window': 'city'}, 200
         else:
+            session["type"] = "company"
             return {'window': 'company'}, 200
     else:
         return {'window': 'failed_auth'}, 200
 
 @app.route("/logout", methods=["GET"])
 def logout():
+    tokens_cursor = tokens_connection.cursor()
+    query = f'DELETE FROM tokens WHERE token="{session["token"]}"'
+    tokens_connection.execute(query)
+    tokens_connection.commit()
+    tokens_cursor.close()
     session.clear()
     return redirect("/")
 
 @app.route('/city', methods=["GET"])
 def city():
-    return render_template('city/home.html')
+    if token_valid() and ("type" in session) and session["type"] == "city":
+        return render_template('city/home.html')
+    else:
+        return redirect("/")
 
 @app.route('/company', methods=["GET"])
 def company():
-    return render_template('company/home.html')
+    if token_valid() and "type" in session and session["type"] == "company":
+        return render_template('company/home.html')
+    else:
+        return redirect("/")
 
 @app.route('/failed_auth', methods=["GET"])
 def failed_auth():
     return render_template('error/failed_auth.html')
 
 
-
+def token_valid():
+    tokens_cursor = tokens_connection.cursor()
+    query = f'SELECT token FROM tokens WHERE token="{session["token"]}"'
+    query_results = tokens_connection.execute(query).fetchall()
+    print("token_valid result: "+str(query_results))
+    tokens_cursor.close()
+    return True if len(query_results) > 0 else False
 
 
 
@@ -165,9 +187,11 @@ def create_user():
 #  ╚══╝╚══╝ ╚══════╝╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ 
 
 def public_page():
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)
+    
 def admin_page():
-    appAdmin.run(debug=True, port=8123)
+    appAdmin.run(debug=False, port=8123)
+
 def token_watchdog():
     while True:
         print("Token Cleanup")
@@ -176,16 +200,22 @@ def token_watchdog():
         tokens_connection.execute(query)
         tokens_connection.commit()
         tokens_cursor.close()
-        time.sleep(300)
+        time.sleep(60)
 
+
+# https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python#1112350
+def signal_handler(sig, frame):
+    sys.exit(0)
 
 if __name__ == "__main__":
-    threads = []
+    tokens_cursor = tokens_connection.cursor()
+    query = f'DELETE FROM tokens'
+    tokens_connection.execute(query)
+    tokens_connection.commit()
+    tokens_cursor.close()
     threads.append(threading.Thread(target=public_page))
     threads.append(threading.Thread(target=admin_page))
     threads.append(threading.Thread(target=token_watchdog))
     for i in threads:
         i.start()
-    for i in threads:
-        i.join()
-    
+    signal.signal(signal.SIGINT, signal_handler)
