@@ -1,4 +1,5 @@
 :root {}
+
 body{
     background-color: #97999a
 }
@@ -22,6 +23,7 @@ input[type=text] {
     border-radius: 4px;
     box-sizing: border-box;
 }
+
 label {
     display: block;
 }
@@ -40,6 +42,7 @@ input[type=submit] {
 input[type=submit]:hover {
     background-color: #45a049;
 }
+
 /* Client Selection Tools Container */
 .client-selection-container {
     padding-inline:5%;
@@ -95,4 +98,3 @@ input[type=submit]:hover {
     margin:1%;
     /* max-width: max-content; */
 }
-  

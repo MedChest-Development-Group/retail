@@ -1,4 +1,4 @@
-from flask import Flask,request,render_template,redirect,url_for,session
+from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory
 from flask_cors import CORS
 import threading
 import sqlite3
@@ -73,6 +73,9 @@ CORS(app)
 def base_page():
     return render_template('login.html')
 
+@app.route('/favicon.ico', methods=["GET"])
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype = 'image/vnd.microsoft.icon')
 
 @app.route('/auth', methods=["POST"])
 def auth():
