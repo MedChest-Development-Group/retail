@@ -1,47 +1,104 @@
-:root {}
+:root {
+    --banner: lightblue;
+}
 
-body{
-    background-color: #97999a
+html {
+    overflow-x: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    line-height: 1.5;
 }
 
 .center {
     text-align: center;
 }
 
+.login-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+}
+
+.welcome-banner {
+    position: fixed;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    lefT: 0;
+    bottom: 0;
+    top: 0;
+    min-height: 100vh;
+    min-width: 50%;
+    max-width: 50%;
+    background-color: var(--banner);
+}
+
+.login-form-div {
+    left: 50%;
+    width: 50%;
+    min-height: 100vh;
+    position: absolute;
+    display: flex;       
+    align-items: center;   
+    justify-content: center; 
+}
+
 .login-form {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    align-content: center;
 }
 
-input[type=text] {
-    width: 100%;
+/* .login-form-div {
+    left: 50%;
+    width: 50%;
+    min-height: 100vh;
+    position: absolute;
+}
+
+.login-form {
+    top: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    height: 100%;
+} */
+
+input#username, input#password {
+    width: 40%;
     padding: 12px 20px;
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 10px;
     box-sizing: border-box;
 }
 
 label {
     display: block;
+    font-size: 1.2em;
 }
 
-input[type=submit] {
-    width: 60%;
+button#loginButton {
+    width: 40%;
     background-color: #04AA6D;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
     cursor: pointer;
 }
 
-input[type=submit]:hover {
+button#loginButton:hover {
     background-color: #45a049;
 }
+
 
 /* Client Selection Tools Container */
 .client-selection-container {
