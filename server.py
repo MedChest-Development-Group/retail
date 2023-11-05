@@ -48,7 +48,7 @@ tokens_connection.commit()
 tokens_cursor.close()
 
 # Configurable Session Length, in Seconds
-SESSION_LENGTH = 60
+SESSION_LENGTH = 3600
 threads = []
 
 
