@@ -1,4 +1,4 @@
-from flask import Flask,request,render_template,redirect,url_for,session
+from flask import Flask,request,render_template,redirect,session
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import threading
@@ -49,7 +49,7 @@ tokens_connection.commit()
 tokens_cursor.close()
 
 # Configurable Session Length, in Seconds
-SESSION_LENGTH = 60
+SESSION_LENGTH = 3600
 threads = []
 
 
@@ -154,7 +154,7 @@ def logout():
 
 @app.route('/city', methods=["GET"])
 def city():
-    if token_valid() and ("type" in session) and session["type"] == "city":
+    if token_valid() and "type" in session and session["type"] == "city":
         return render_template('city/home.html')
     else:
         return redirect("/")
@@ -223,10 +223,10 @@ def create_user():
 # ╚███╔███╔╝███████╗██████╔╝    ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║
 #  ╚══╝╚══╝ ╚══════╝╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ 
 
-def public_page():
+def run_public_page():
     app.run(debug=False, port=5000)
     
-def admin_page():
+def run_admin_page():
     appAdmin.run(debug=False, port=8123)
 
 def token_watchdog():
@@ -250,8 +250,8 @@ if __name__ == "__main__":
     tokens_connection.execute(query)
     tokens_connection.commit()
     tokens_cursor.close()
-    threads.append(threading.Thread(target=public_page))
-    threads.append(threading.Thread(target=admin_page))
+    threads.append(threading.Thread(target=run_public_page))
+    threads.append(threading.Thread(target=run_admin_page))
     threads.append(threading.Thread(target=token_watchdog))
     for i in threads:
         i.start()
