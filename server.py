@@ -1,5 +1,6 @@
 from flask import Flask,request,render_template,redirect,session
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 import threading
 import sqlite3
 import hashlib
@@ -65,6 +66,29 @@ threads = []
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
 # This allows you to see HTML/CSS changes when you reload the page when you're running and editing the app locally
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+# Upload files parameters
+UPLOAD_FOLDER_PATH = 'app/uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PATH
+# 10 MB file limit
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+
+# File database initialization
+# The files database can be created
+# However schema should be discussed among group
+# Especially since there clientIDs will determine who has access
+# But no client database is in place
+# files_connection = sqlite3.connect("files.db", check_same_thread=False)
+# files_cursor = files_connection.cursor()
+# files_cursor.execute("""
+# CREATE TABLE IF NOT EXISTS files (
+#     filename text PRIMARY KEY
+#     clientID INTEGER
+# )
+# """)
+# files_connection.commit()
+# files_cursor.close()
+
 # Configure app to support user sessions
 app.secret_key = os.urandom(32)
 CORS(app)
@@ -104,6 +128,19 @@ def auth():
             return {'window': 'company'}, 200
     else:
         return {'window': 'failed_auth'}, 200
+    
+
+@app.route('/upload', methods=["GET"])
+def upload():
+    return render_template('upload.html')
+
+@app.route('/uploader', methods=['POST'])
+def uploader():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save(UPLOAD_FOLDER_PATH+secure_filename(f.filename))
+    return 'file uploaded successfully'
+
 
 @app.route("/logout", methods=["GET"])
 def logout():
