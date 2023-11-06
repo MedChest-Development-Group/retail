@@ -175,7 +175,7 @@ def token_valid():
     tokens_cursor = tokens_connection.cursor()
     query = f'SELECT token FROM tokens WHERE token="{session["token"]}"'
     query_results = tokens_connection.execute(query).fetchall()
-    print("token_valid result: "+str(query_results))
+    # print("token_valid result: "+str(query_results))
     tokens_cursor.close()
     return True if len(query_results) > 0 else False
 
