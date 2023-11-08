@@ -1,4 +1,4 @@
-from flask import Flask,request,render_template,redirect,session
+from flask import Flask,request,render_template,url_for,redirect,session
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import threading
@@ -36,7 +36,33 @@ users_cursor.close()
 
 
 
-# User Database Initialization
+# User DB Accesor Methods
+def select_from_users(attribs, condition):
+    users_cursor = users_connection.cursor()
+    if condition != None:
+        query = f'SELECT {attribs} FROM users WHERE {condition}'
+    else:
+        query = f'SELECT {attribs} FROM users'
+    query_results = users_connection.execute(query).fetchall()
+    users_cursor.close()
+    return query_results
+
+def insert_into_users(first_name, last_name, user_type, username, password):
+    users_cursor = users_connection.cursor()
+    query = f'INSERT INTO users(id,first_name,last_name,user_type,username,password) VALUES (NULL,"{first_name}","{last_name}","{user_type}","{username}","{hashlib.sha256(str.encode(password+"Alittlebitofsaltandpepper.")).hexdigest()}")'
+    users_connection.execute(query)
+    users_connection.commit()
+    users_cursor.close()
+
+def delete_from_users(condition):
+    users_cursor = users_connection.cursor()
+    query = f'DELETE FROM users WHERE {condition}'
+    users_connection.execute(query)
+    users_connection.commit()
+    users_cursor.close()
+
+
+# Token Database Initialization
 tokens_connection = sqlite3.connect("tokens.db", check_same_thread=False)
 tokens_cursor = tokens_connection.cursor()
 tokens_cursor.execute("""
@@ -47,6 +73,36 @@ CREATE TABLE IF NOT EXISTS tokens (
 """)
 tokens_connection.commit()
 tokens_cursor.close()
+
+
+
+# Token DB Accesor Methods
+def select_from_tokens(attribs, condition):
+    tokens_cursor = tokens_connection.cursor()
+    if condition != None:
+        query = f'SELECT {attribs} FROM tokens WHERE {condition}'
+    else:
+        query = f'SELECT {attribs} FROM tokens'
+    query_results = tokens_connection.execute(query).fetchall()
+    tokens_cursor.close()
+    return query_results
+
+def insert_into_tokens(token, expire_date):
+    tokens_cursor = tokens_connection.cursor()
+    query = f'INSERT INTO tokens(token,expire_date) VALUES ("{token}", {expire_date})'
+    tokens_connection.execute(query)
+    tokens_connection.commit()
+    tokens_cursor.close()
+
+def delete_from_tokens(condition):
+    tokens_cursor = tokens_connection.cursor()
+    if condition != None:
+        query = f'DELETE FROM tokens WHERE {condition}'
+    else:
+        query = 'DELETE FROM tokens'
+    tokens_connection.execute(query)
+    tokens_connection.commit()
+    tokens_cursor.close()
 
 # Configurable Session Length, in Seconds
 SESSION_LENGTH = 3600
@@ -100,25 +156,15 @@ def base_page():
 
 @app.route('/auth', methods=["POST"])
 def auth():
-    users_cursor = users_connection.cursor()
     password = request.get_json().get('password')
     username = request.get_json().get('username')
-    # print(password)
-    # print(username)
-    query = f'SELECT user_type FROM users WHERE username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"'
-    query_results=users_cursor.execute(query).fetchall()
-    users_cursor.close()
-    # print(query_results)
+
+    query_results=select_from_users("user_type", f'username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"')
     if(len(query_results) > 0):
         timestamp = (datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()
         token = hashlib.sha256(str.encode(str(timestamp))).hexdigest()
         session["token"] = token
-
-        tokens_cursor = tokens_connection.cursor()
-        query = f'INSERT INTO tokens(token,expire_date) VALUES ("{token}", {timestamp+SESSION_LENGTH})'
-        tokens_connection.execute(query)
-        tokens_connection.commit()
-        tokens_cursor.close()
+        insert_into_tokens(token, timestamp+SESSION_LENGTH)
 
         if(query_results[0][0] == "client"):
             session["type"] = "city"
@@ -144,11 +190,7 @@ def uploader():
 
 @app.route("/logout", methods=["GET"])
 def logout():
-    tokens_cursor = tokens_connection.cursor()
-    query = f'DELETE FROM tokens WHERE token="{session["token"]}"'
-    tokens_connection.execute(query)
-    tokens_connection.commit()
-    tokens_cursor.close()
+    delete_from_tokens(f'token="{session["token"]}"')
     session.clear()
     return redirect("/")
 
@@ -172,11 +214,7 @@ def failed_auth():
 
 
 def token_valid():
-    tokens_cursor = tokens_connection.cursor()
-    query = f'SELECT token FROM tokens WHERE token="{session["token"]}"'
-    query_results = tokens_connection.execute(query).fetchall()
-    print("token_valid result: "+str(query_results))
-    tokens_cursor.close()
+    query_results = select_from_tokens("token", f'token="{session["token"]}"')
     return True if len(query_results) > 0 else False
 
 
@@ -197,14 +235,18 @@ appAdmin = Flask(__name__, template_folder='app/templates', static_folder='app/s
 def admin_page():
     return render_template('admin/dashboard.html')
 
-@appAdmin.route('/create_user', methods=["GET"])
+@appAdmin.route('/create_user', methods=["GET", "POST"])
 def create_user():
-    users_cursor = users_connection.cursor()
-    query = f'INSERT INTO users(id,first_name,last_name,user_type,username,password) VALUES (NULL,"Test","User","client","tuser123","{hashlib.sha256(str.encode("mypassword"+"Alittlebitofsaltandpepper.")).hexdigest()}")'
-    users_connection.execute(query)
-    users_connection.commit()
-    users_cursor.close()
-    return admin_page()
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        user_type = request.form['user_type']
+        username = request.form['username']
+        password = request.form['password']
+        insert_into_users(first_name, last_name, user_type, username, password)
+        return redirect(url_for("admin_page"))
+    return render_template('admin/create_user.html')
+    
 
 
 
@@ -232,11 +274,7 @@ def run_admin_page():
 def token_watchdog():
     while True:
         print("Token Cleanup")
-        tokens_cursor = tokens_connection.cursor()
-        query = f'DELETE FROM tokens WHERE expire_date<{(datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()}'
-        tokens_connection.execute(query)
-        tokens_connection.commit()
-        tokens_cursor.close()
+        delete_from_tokens(f'expire_date<{(datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()}')
         time.sleep(60)
 
 
@@ -245,11 +283,7 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 if __name__ == "__main__":
-    tokens_cursor = tokens_connection.cursor()
-    query = f'DELETE FROM tokens'
-    tokens_connection.execute(query)
-    tokens_connection.commit()
-    tokens_cursor.close()
+    delete_from_tokens(None)
     threads.append(threading.Thread(target=run_public_page))
     threads.append(threading.Thread(target=run_admin_page))
     threads.append(threading.Thread(target=token_watchdog))
