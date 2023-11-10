@@ -1,4 +1,4 @@
-from flask import Flask,request,render_template,url_for,redirect,session
+from flask import Flask, request, render_template, url_for, redirect, session, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import threading
@@ -8,7 +8,7 @@ from datetime import datetime
 import time
 import os
 import signal
-import sys
+import sys    
 
 
 #  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗ 
@@ -33,8 +33,6 @@ CREATE TABLE IF NOT EXISTS users (
 """)
 users_connection.commit()
 users_cursor.close()
-
-
 
 # User DB Accesor Methods
 def select_from_users(attribs, condition):
@@ -61,7 +59,6 @@ def delete_from_users(condition):
     users_connection.commit()
     users_cursor.close()
 
-
 # Token Database Initialization
 tokens_connection = sqlite3.connect("tokens.db", check_same_thread=False)
 tokens_cursor = tokens_connection.cursor()
@@ -73,8 +70,6 @@ CREATE TABLE IF NOT EXISTS tokens (
 """)
 tokens_connection.commit()
 tokens_cursor.close()
-
-
 
 # Token DB Accesor Methods
 def select_from_tokens(attribs, condition):
@@ -108,17 +103,6 @@ def delete_from_tokens(condition):
 SESSION_LENGTH = 3600
 threads = []
 
-
-
-
-# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗ 
-# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝ 
-# ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
-# ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║         ██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
-# ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
-# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝     
-
-
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
 # This allows you to see HTML/CSS changes when you reload the page when you're running and editing the app locally
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -149,10 +133,20 @@ app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 app.secret_key = os.urandom(32)
 CORS(app)
 
+# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗ 
+# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝ 
+# ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
+# ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║         ██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
+# ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
+# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝     
+
 @app.route('/', methods=["GET"])
 def base_page():
     return render_template('login.html')
 
+@app.route('/favicon.ico', methods=["GET"])
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype = 'image/vnd.microsoft.icon')
 
 @app.route('/auth', methods=["POST"])
 def auth():
@@ -218,8 +212,6 @@ def token_valid():
     return True if len(query_results) > 0 else False
 
 
-
-
 #  █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗
 # ██╔══██╗██╔══██╗████╗ ████║██║████╗  ██║
 # ███████║██║  ██║██╔████╔██║██║██╔██╗ ██║
@@ -227,13 +219,15 @@ def token_valid():
 # ██║  ██║██████╔╝██║ ╚═╝ ██║██║██║ ╚████║
 # ╚═╝  ╚═╝╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝   
 
-
 appAdmin = Flask(__name__, template_folder='app/templates', static_folder='app/static')
-
 
 @appAdmin.route('/', methods=["GET"])
 def admin_page():
-    return render_template('admin/dashboard.html')
+    """
+    Fetchs all users and just displays them on the admin page"""
+    user_data = select_from_users("*", None)
+    users = [{'id': user[0], 'first_name': user[1], 'last_name': user[2], 'user_type': user[3], 'username': user[4]} for user in user_data]
+    return render_template('admin/dashboard.html', users=users)
 
 @appAdmin.route('/create_user', methods=["GET", "POST"])
 def create_user():
@@ -246,16 +240,6 @@ def create_user():
         insert_into_users(first_name, last_name, user_type, username, password)
         return redirect(url_for("admin_page"))
     return render_template('admin/create_user.html')
-    
-
-
-
-
-
-
-
-
-
 
 
 # ██╗    ██╗███████╗██████╗     ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ 
