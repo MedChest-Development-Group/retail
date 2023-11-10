@@ -1,10 +1,17 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div>
-    <h1>Create User</h1>
-    <form action="{{url_for('create_user')}}">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create User</title>
+</head>
+<body>
+    <h1>Create New User</h1>
+    <form action="/create_user" method="post">
+        <input type="text" name="first_name" placeholder="First Name" required><br>
+        <input type="text" name="last_name" placeholder="Last Name" required><br>
+        <input type="text" name="user_type" placeholder="User Type" required><br>
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
         <input type="submit" value="Create User">
     </form>
-</div>
-{% endblock %}
+</body>
+</html>

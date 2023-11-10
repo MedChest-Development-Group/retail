@@ -1,0 +1,71 @@
+#  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗ 
+# ██╔════╝ ██║     ██╔═══██╗██╔══██╗██╔══██╗██║         ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
+# ██║  ███╗██║     ██║   ██║██████╔╝███████║██║         ███████╗█████╗     ██║   ██║   ██║██████╔╝
+# ██║   ██║██║     ██║   ██║██╔══██╗██╔══██║██║         ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝ 
+# ╚██████╔╝███████╗╚██████╔╝██████╔╝██║  ██║███████╗    ███████║███████╗   ██║   ╚██████╔╝██║     
+#  ╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝     
+
+# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗ 
+# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝ 
+# ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
+# ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║         ██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
+# ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
+# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝     
+
+#  █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗
+# ██╔══██╗██╔══██╗████╗ ████║██║████╗  ██║
+# ███████║██║  ██║██╔████╔██║██║██╔██╗ ██║
+# ██╔══██║██║  ██║██║╚██╔╝██║██║██║╚██╗██║
+# ██║  ██║██████╔╝██║ ╚═╝ ██║██║██║ ╚████║
+# ╚═╝  ╚═╝╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝   
+
+# ██╗    ██╗███████╗██████╗     ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ 
+# ██║    ██║██╔════╝██╔══██╗    ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗
+# ██║ █╗ ██║█████╗  ██████╔╝    ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝   
+# ██║███╗██║██╔══╝  ██╔══██╗    ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗  
+# ╚███╔███╔╝███████╗██████╔╝    ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║
+#  ╚══╝╚══╝ ╚══════╝╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ 
+
+@app.route('/favicon.ico', methods=["GET"])
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype = 'image/vnd.microsoft.icon')
+
+appAdmin = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+appAdmin.config['FLASK_ADMIN_SWATCH'] = 'morph'
+
+admin = Admin(appAdmin, name="retail-admin")
+class UserView(ModelView):
+    column_list = ('id', 'username', 'email', 'role')
+    
+    form_excluded_columns = ('password_hash',)
+    
+    column_searchable_list = ('username', 'email')
+    
+    column_filters = ('username', 'email', 'role')
+    
+    column_sortable_list = ('username', 'email', 'role')
+    
+    form_overrides = {
+        'password': PasswordField
+    }
+    
+    def on_model_change(self, form, model, is_created):
+        if form.password.data:
+            model.password_hash = generate_password_hash(form.password.data)
+    
+    @expose('/details/')
+    def details_view(self):
+        return self.render('admin/details.html')
+
+admin.add_view(UserView(User, db.session))
+
+<!-- {% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1>Create User</h1>
+    <form action="{{url_for('create_user')}}">
+        <input type="submit" value="Create User">
+    </form>
+</div>
+{% endblock %} -->
