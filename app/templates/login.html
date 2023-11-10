@@ -6,19 +6,27 @@
     <meta charset="utf-8" />
     <title> My retail strategies Homepage</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <meta name="description" content="My retail strategies page" />
 </head>
 
 <body>
-    <div>
-        <h1 class="center">Homepage Login</h1>
-        <form class="login-form center">
-            <label for="user">Username:</label>
-            <input type="username" name="user" id="username">
-            <label for="pass">Password:</label>
-            <input type="password" name="pass" id="password">
-            <button type="button" id="loginButton">Log In</button>
-        </form>
+    <div class="login-container">
+        <div class="welcome-banner center">
+            <h2 class="welcome-text">
+                Welcome to your Retail Strategies Portal
+            </h2>
+        </div>
+        <div class="login-form-div center">
+            <h1 class="center">Portal Login</h1>
+            <form class="login-form center">
+                <label for="user">Username:</label>
+                <input type="username" name="user" id="username">
+                <label for="pass">Password:</label>
+                <input type="password" name="pass" id="password">
+                <button type="button" id="loginButton">Log In</button>
+            </form>
+        </div>
     </div>
 </body>
 
