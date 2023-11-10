@@ -29,7 +29,17 @@
                 <h2>Progress Board</h2>
                 <div>
                     <!-- Progress Board Widget -->
-                    <div id="progressBoardWidget" style="width: 100%; height: 90%; position: relative; cursor:auto"></div>
+                    <div class="board">
+                        <div class="column" id="inProgressColumn">
+                            <header>In Progress</header>
+                        </div>
+                        <div class="column" id="wonColumn">
+                            <header>Won</header>
+                        </div>
+                        <div class="column" id="lostColumn">
+                            <header>Lost</header>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="section-container" style="width: 30%;">
@@ -49,4 +59,5 @@
         </div>
     </div>
 </body>
+<script src="../../static/js/client.js"></script>
 {% endblock %}
