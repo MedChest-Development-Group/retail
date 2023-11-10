@@ -1,17 +1,59 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create User</title>
-</head>
-<body>
-    <h1>Create New User</h1>
-    <form action="/create_user" method="post">
-        <input type="text" name="first_name" placeholder="First Name" required><br>
-        <input type="text" name="last_name" placeholder="Last Name" required><br>
-        <input type="text" name="user_type" placeholder="User Type" required><br>
-        <input type="text" name="username" placeholder="Username" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
-        <input type="submit" value="Create User">
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1>Create User</h1>
+    <form method="POST">
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" required>
+        
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" required>
+        
+        <label for="user_type">User Type:</label>
+        <select id="user_type" name="user_type">
+            <option value="city">City</option>
+            <option value="RS employee">RS Employee</option>
+            <option value="admin">Admin</option>
+        </select>
+        
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <input id="createUserButton" type="submit" value="Create User">
     </form>
-</body>
-</html>
+</div>
+
+<script>
+    document.getElementById('createUserButton').addEventListener('click', function() {
+        var loginJSON = {
+            first_name: document.getElementById("first_name").value,
+            last_name: document.getElementById("last_name").value,
+            user_type: document.getElementById("user_type").value,
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        };
+        var loginData = JSON.stringify(loginJSON);
+        fetch("http://127.0.0.1:5000/create_user", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: loginData
+        })
+        .then(response => response.json()) // You can handle the server's response here
+        .then(data => {
+            console.log(data)
+            // Handle the response from the server, e.g., display a success message or redirect to a new page.
+            window.location = data.window;
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch.
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock %}
