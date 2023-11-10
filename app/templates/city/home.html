@@ -8,38 +8,56 @@
     <meta name="description" content="My retail strategies page" />
 </head>
 <body>
-    <h1>{{ customer_name }} Homepage</h1>
-    <!-- Banner here -->
-    <div class="top-container">
-        <div class="data-left">
-            <!-- Imported data -->
-            <h3>Data Imported</h3>
-        </div>
-        <div class="data-right">
-            <!-- Data tutorials -->
-            <h3>Data Tutorials</h3>
-
-        </div>
+    <div class="title-container">
+        <h1>{{ customer_name }} Homepage</h1>
     </div>
-    <div class="middle-container">
-        <div class="data-left ">
-            <!-- Retailer progress -->
-            <h3>Progress Board</h3>
+    <div class="content-container">
+        <!-- Banner here -->
+        <div class="horizontal-container" style="height: 30%;">
+            <div class="section-container" style="width: 50%;">
+                <!-- Imported data -->
+                <h2>Data Imported</h2>
+            </div>
+            <div class="section-container" style="width: 50%;">
+                <!-- Data tutorials -->
+                <h2>Data Tutorials</h2>
+            </div>
         </div>
-        <div class="data-right ">
-            <!-- PDF stuff, marketing material -->
-            <h3>Marketing Material</h3>
+        <div class="horizontal-container" style="height: 50%;">
+            <div class="section-container" style="width: 70%;">
+                <!-- Retailer progress -->
+                <h2>Progress Board</h2>
+                <div>
+                    <!-- Progress Board Widget -->
+                    <div class="board">
+                        <div class="column" id="inProgressColumn">
+                            <header>In Progress</header>
+                        </div>
+                        <div class="column" id="wonColumn">
+                            <header>Won</header>
+                        </div>
+                        <div class="column" id="lostColumn">
+                            <header>Lost</header>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-container" style="width: 30%;">
+                <!-- PDF stuff, marketing material -->
+                <h2>Marketing Material</h2>
+            </div>
         </div>
-    </div>
-    <div class="bottom-container">
-        <div class="data-left ">
-            <!-- Should be messenger -->
-            <h2>Messenger</h2>
-        </div>
-        <div class="data-right ">
-            <!-- Should be tableau or graph visuals -->
-            
+        <div class="horizontal-container" style="height: 50%;">
+            <div class="section-container" style="width: 70%;">
+                <!-- Should be messenger -->
+                <h2>Messenger</h2>
+            </div>
+            <div class="section-container" style="width: 30%;">
+                <!-- Should be tableau or graph visuals -->
+                <h2>Visuals</h2>
+            </div>
         </div>
     </div>
 </body>
+<script src="../../static/js/client.js"></script>
 {% endblock %}
