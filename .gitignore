@@ -160,5 +160,7 @@ cython_debug/
 #.idea/
 venv/
 env/
-*.zip
+
+# Custom
+tokens.db
 x.txt

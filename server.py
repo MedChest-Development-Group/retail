@@ -1,10 +1,6 @@
-from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory
-from flask_admin import Admin
-from werkzeug.security import generate_password_hash
-from flask_admin import expose
-from wtforms.fields import PasswordField
-from flask_admin.contrib.sqla import ModelView
+from flask import Flask,request,render_template,url_for,redirect,session
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 import threading
 import sqlite3
 import hashlib
@@ -14,7 +10,13 @@ import os
 import signal
 import sys
 
-# here
+
+#  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗ 
+# ██╔════╝ ██║     ██╔═══██╗██╔══██╗██╔══██╗██║         ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
+# ██║  ███╗██║     ██║   ██║██████╔╝███████║██║         ███████╗█████╗     ██║   ██║   ██║██████╔╝
+# ██║   ██║██║     ██║   ██║██╔══██╗██╔══██║██║         ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝ 
+# ╚██████╔╝███████╗╚██████╔╝██████╔╝██║  ██║███████╗    ███████║███████╗   ██║   ╚██████╔╝██║     
+#  ╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝     
 
 # User Database Initialization
 users_connection = sqlite3.connect("users.db", check_same_thread=False)
@@ -32,8 +34,35 @@ CREATE TABLE IF NOT EXISTS users (
 users_connection.commit()
 users_cursor.close()
 
-# here
-# User Database Initialization
+
+
+# User DB Accesor Methods
+def select_from_users(attribs, condition):
+    users_cursor = users_connection.cursor()
+    if condition != None:
+        query = f'SELECT {attribs} FROM users WHERE {condition}'
+    else:
+        query = f'SELECT {attribs} FROM users'
+    query_results = users_connection.execute(query).fetchall()
+    users_cursor.close()
+    return query_results
+
+def insert_into_users(first_name, last_name, user_type, username, password):
+    users_cursor = users_connection.cursor()
+    query = f'INSERT INTO users(id,first_name,last_name,user_type,username,password) VALUES (NULL,"{first_name}","{last_name}","{user_type}","{username}","{hashlib.sha256(str.encode(password+"Alittlebitofsaltandpepper.")).hexdigest()}")'
+    users_connection.execute(query)
+    users_connection.commit()
+    users_cursor.close()
+
+def delete_from_users(condition):
+    users_cursor = users_connection.cursor()
+    query = f'DELETE FROM users WHERE {condition}'
+    users_connection.execute(query)
+    users_connection.commit()
+    users_cursor.close()
+
+
+# Token Database Initialization
 tokens_connection = sqlite3.connect("tokens.db", check_same_thread=False)
 tokens_cursor = tokens_connection.cursor()
 tokens_cursor.execute("""
@@ -45,13 +74,77 @@ CREATE TABLE IF NOT EXISTS tokens (
 tokens_connection.commit()
 tokens_cursor.close()
 
+
+
+# Token DB Accesor Methods
+def select_from_tokens(attribs, condition):
+    tokens_cursor = tokens_connection.cursor()
+    if condition != None:
+        query = f'SELECT {attribs} FROM tokens WHERE {condition}'
+    else:
+        query = f'SELECT {attribs} FROM tokens'
+    query_results = tokens_connection.execute(query).fetchall()
+    tokens_cursor.close()
+    return query_results
+
+def insert_into_tokens(token, expire_date):
+    tokens_cursor = tokens_connection.cursor()
+    query = f'INSERT INTO tokens(token,expire_date) VALUES ("{token}", {expire_date})'
+    tokens_connection.execute(query)
+    tokens_connection.commit()
+    tokens_cursor.close()
+
+def delete_from_tokens(condition):
+    tokens_cursor = tokens_connection.cursor()
+    if condition != None:
+        query = f'DELETE FROM tokens WHERE {condition}'
+    else:
+        query = 'DELETE FROM tokens'
+    tokens_connection.execute(query)
+    tokens_connection.commit()
+    tokens_cursor.close()
+
 # Configurable Session Length, in Seconds
-SESSION_LENGTH = 60
+SESSION_LENGTH = 3600
 threads = []
+
+
+
+
+# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗ 
+# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝ 
+# ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
+# ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║         ██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
+# ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
+# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝     
+
 
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
 # This allows you to see HTML/CSS changes when you reload the page when you're running and editing the app locally
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+# Upload files parameters
+UPLOAD_FOLDER_PATH = 'app/uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PATH
+# 10 MB file limit
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+
+# File database initialization
+# The files database can be created
+# However schema should be discussed among group
+# Especially since there clientIDs will determine who has access
+# But no client database is in place
+# files_connection = sqlite3.connect("files.db", check_same_thread=False)
+# files_cursor = files_connection.cursor()
+# files_cursor.execute("""
+# CREATE TABLE IF NOT EXISTS files (
+#     filename text PRIMARY KEY
+#     clientID INTEGER
+# )
+# """)
+# files_connection.commit()
+# files_cursor.close()
+
 # Configure app to support user sessions
 app.secret_key = os.urandom(32)
 CORS(app)
@@ -60,31 +153,18 @@ CORS(app)
 def base_page():
     return render_template('login.html')
 
-@app.route('/favicon.ico', methods=["GET"])
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype = 'image/vnd.microsoft.icon')
 
 @app.route('/auth', methods=["POST"])
 def auth():
-    users_cursor = users_connection.cursor()
     password = request.get_json().get('password')
     username = request.get_json().get('username')
-    # print(password)
-    # print(username)
-    query = f'SELECT user_type FROM users WHERE username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"'
-    query_results=users_cursor.execute(query).fetchall()
-    users_cursor.close()
-    # print(query_results)
+
+    query_results=select_from_users("user_type", f'username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"')
     if(len(query_results) > 0):
         timestamp = (datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()
         token = hashlib.sha256(str.encode(str(timestamp))).hexdigest()
         session["token"] = token
-
-        tokens_cursor = tokens_connection.cursor()
-        query = f'INSERT INTO tokens(token,expire_date) VALUES ("{token}", {timestamp+SESSION_LENGTH})'
-        tokens_connection.execute(query)
-        tokens_connection.commit()
-        tokens_cursor.close()
+        insert_into_tokens(token, timestamp+SESSION_LENGTH)
 
         if(query_results[0][0] == "client"):
             session["type"] = "city"
@@ -94,20 +174,29 @@ def auth():
             return {'window': 'company'}, 200
     else:
         return {'window': 'failed_auth'}, 200
+    
+
+@app.route('/upload', methods=["GET"])
+def upload():
+    return render_template('upload.html')
+
+@app.route('/uploader', methods=['POST'])
+def uploader():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save(UPLOAD_FOLDER_PATH+secure_filename(f.filename))
+    return 'file uploaded successfully'
+
 
 @app.route("/logout", methods=["GET"])
 def logout():
-    tokens_cursor = tokens_connection.cursor()
-    query = f'DELETE FROM tokens WHERE token="{session["token"]}"'
-    tokens_connection.execute(query)
-    tokens_connection.commit()
-    tokens_cursor.close()
+    delete_from_tokens(f'token="{session["token"]}"')
     session.clear()
     return redirect("/")
 
 @app.route('/city', methods=["GET"])
 def city():
-    if token_valid() and ("type" in session) and session["type"] == "city":
+    if token_valid() and "type" in session and session["type"] == "city":
         return render_template('city/home.html')
     else:
         return redirect("/")
@@ -125,71 +214,49 @@ def failed_auth():
 
 
 def token_valid():
-    tokens_cursor = tokens_connection.cursor()
-    query = f'SELECT token FROM tokens WHERE token="{session["token"]}"'
-    query_results = tokens_connection.execute(query).fetchall()
-    print("token_valid result: "+str(query_results))
-    tokens_cursor.close()
+    query_results = select_from_tokens("token", f'token="{session["token"]}"')
     return True if len(query_results) > 0 else False
 
-# here
+
+
+
+#  █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗
+# ██╔══██╗██╔══██╗████╗ ████║██║████╗  ██║
+# ███████║██║  ██║██╔████╔██║██║██╔██╗ ██║
+# ██╔══██║██║  ██║██║╚██╔╝██║██║██║╚██╗██║
+# ██║  ██║██████╔╝██║ ╚═╝ ██║██║██║ ╚████║
+# ╚═╝  ╚═╝╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝   
+
+
 appAdmin = Flask(__name__, template_folder='app/templates', static_folder='app/static')
-appAdmin.config['FLASK_ADMIN_SWATCH'] = 'morph'
 
-admin = Admin(appAdmin, name="retail-admin")
-class UserView(ModelView):
-    column_list = ('id', 'username', 'email', 'role')
-    
-    form_excluded_columns = ('password_hash',)
-    
-    column_searchable_list = ('username', 'email')
-    
-    column_filters = ('username', 'email', 'role')
-    
-    column_sortable_list = ('username', 'email', 'role')
-    
-    form_overrides = {
-        'password': PasswordField
-    }
-    
-    def on_model_change(self, form, model, is_created):
-        if form.password.data:
-            model.password_hash = generate_password_hash(form.password.data)
-    
-    @expose('/details/')
-    def details_view(self):
-        return self.render('admin/details.html')
-
-admin.add_view(UserView(User, db.session))
 
 @appAdmin.route('/', methods=["GET"])
 def admin_page():
     return render_template('admin/dashboard.html')
 
-@appAdmin.route('/create_user', methods=["GET"])
+@appAdmin.route('/create_user', methods=["GET", "POST"])
 def create_user():
-    users_cursor = users_connection.cursor()
-    query = f'INSERT INTO users(id,first_name,last_name,user_type,username,password) VALUES (NULL,"Test","User","client","tuser123","{hashlib.sha256(str.encode("mypassword"+"Alittlebitofsaltandpepper.")).hexdigest()}")'
-    users_connection.execute(query)
-    users_connection.commit()
-    users_cursor.close()
-    return admin_page()
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        user_type = request.form['user_type']
+        username = request.form['username']
+        password = request.form['password']
+        insert_into_users(first_name, last_name, user_type, username, password)
+        return redirect(url_for("admin_page"))
+    return render_template('admin/create_user.html')
 
-# here
-def public_page():
+def run_public_page():
     app.run(debug=False, port=5000)
     
-def admin_page():
+def run_admin_page():
     appAdmin.run(debug=False, port=8123)
 
 def token_watchdog():
     while True:
         print("Token Cleanup")
-        tokens_cursor = tokens_connection.cursor()
-        query = f'DELETE FROM tokens WHERE expire_date<{(datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()}'
-        tokens_connection.execute(query)
-        tokens_connection.commit()
-        tokens_cursor.close()
+        delete_from_tokens(f'expire_date<{(datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()}')
         time.sleep(60)
 
 
@@ -198,13 +265,9 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 if __name__ == "__main__":
-    tokens_cursor = tokens_connection.cursor()
-    query = f'DELETE FROM tokens'
-    tokens_connection.execute(query)
-    tokens_connection.commit()
-    tokens_cursor.close()
-    threads.append(threading.Thread(target=public_page))
-    threads.append(threading.Thread(target=admin_page))
+    delete_from_tokens(None)
+    threads.append(threading.Thread(target=run_public_page))
+    threads.append(threading.Thread(target=run_admin_page))
     threads.append(threading.Thread(target=token_watchdog))
     for i in threads:
         i.start()
