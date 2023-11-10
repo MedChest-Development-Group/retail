@@ -1,4 +1,9 @@
 from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory
+from flask_admin import Admin
+from werkzeug.security import generate_password_hash
+from flask_admin import expose
+from wtforms.fields import PasswordField
+from flask_admin.contrib.sqla import ModelView
 from flask_cors import CORS
 import threading
 import sqlite3
@@ -9,13 +14,7 @@ import os
 import signal
 import sys
 
-
-#  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗ 
-# ██╔════╝ ██║     ██╔═══██╗██╔══██╗██╔══██╗██║         ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
-# ██║  ███╗██║     ██║   ██║██████╔╝███████║██║         ███████╗█████╗     ██║   ██║   ██║██████╔╝
-# ██║   ██║██║     ██║   ██║██╔══██╗██╔══██║██║         ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝ 
-# ╚██████╔╝███████╗╚██████╔╝██████╔╝██║  ██║███████╗    ███████║███████╗   ██║   ╚██████╔╝██║     
-#  ╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝     
+# here
 
 # User Database Initialization
 users_connection = sqlite3.connect("users.db", check_same_thread=False)
@@ -33,8 +32,7 @@ CREATE TABLE IF NOT EXISTS users (
 users_connection.commit()
 users_cursor.close()
 
-
-
+# here
 # User Database Initialization
 tokens_connection = sqlite3.connect("tokens.db", check_same_thread=False)
 tokens_cursor = tokens_connection.cursor()
@@ -50,17 +48,6 @@ tokens_cursor.close()
 # Configurable Session Length, in Seconds
 SESSION_LENGTH = 60
 threads = []
-
-
-
-
-# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗ 
-# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝ 
-# ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
-# ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║         ██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
-# ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
-# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝     
-
 
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
 # This allows you to see HTML/CSS changes when you reload the page when you're running and editing the app locally
@@ -145,19 +132,35 @@ def token_valid():
     tokens_cursor.close()
     return True if len(query_results) > 0 else False
 
-
-
-
-#  █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗
-# ██╔══██╗██╔══██╗████╗ ████║██║████╗  ██║
-# ███████║██║  ██║██╔████╔██║██║██╔██╗ ██║
-# ██╔══██║██║  ██║██║╚██╔╝██║██║██║╚██╗██║
-# ██║  ██║██████╔╝██║ ╚═╝ ██║██║██║ ╚████║
-# ╚═╝  ╚═╝╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝   
-
-
+# here
 appAdmin = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+appAdmin.config['FLASK_ADMIN_SWATCH'] = 'morph'
 
+admin = Admin(appAdmin, name="retail-admin")
+class UserView(ModelView):
+    column_list = ('id', 'username', 'email', 'role')
+    
+    form_excluded_columns = ('password_hash',)
+    
+    column_searchable_list = ('username', 'email')
+    
+    column_filters = ('username', 'email', 'role')
+    
+    column_sortable_list = ('username', 'email', 'role')
+    
+    form_overrides = {
+        'password': PasswordField
+    }
+    
+    def on_model_change(self, form, model, is_created):
+        if form.password.data:
+            model.password_hash = generate_password_hash(form.password.data)
+    
+    @expose('/details/')
+    def details_view(self):
+        return self.render('admin/details.html')
+
+admin.add_view(UserView(User, db.session))
 
 @appAdmin.route('/', methods=["GET"])
 def admin_page():
@@ -172,23 +175,7 @@ def create_user():
     users_cursor.close()
     return admin_page()
 
-
-
-
-
-
-
-
-
-
-
-# ██╗    ██╗███████╗██████╗     ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ 
-# ██║    ██║██╔════╝██╔══██╗    ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗
-# ██║ █╗ ██║█████╗  ██████╔╝    ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝   
-# ██║███╗██║██╔══╝  ██╔══██╗    ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗  
-# ╚███╔███╔╝███████╗██████╔╝    ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║
-#  ╚══╝╚══╝ ╚══════╝╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ 
-
+# here
 def public_page():
     app.run(debug=False, port=5000)
     
