@@ -14,6 +14,8 @@
                     <th>Last Name</th>
                     <th>User Type</th>
                     <th>Username</th>
+                    <th>City ID</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -24,6 +26,28 @@
                     <td>{{ user.last_name }}</td>
                     <td>{{ user.user_type }}</td>
                     <td>{{ user.username }}</td>
+                    <td>{{ user.cityID }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h2>City List</h2>
+    <div class="users-list">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>City ID</th>
+                    <th>City</th>
+                    <th>State</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for city in cities %}
+                <tr>
+                    <td>{{ city.cityID }}</td>
+                    <td>{{ city.city }}</td>
+                    <td>{{ city.state }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
