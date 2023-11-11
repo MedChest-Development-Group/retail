@@ -56,7 +56,7 @@ body {
     transform: translate(-50%, -50%);
 
     /* Make the image transparent */
-    opacity: 0.95; /* Adjust the value between 0 (completely transparent) and 1 (completely opaque)
+    opacity: 0.93; /* Adjust the value between 0 (completely transparent) and 1 (completely opaque)
 
     /* Set background properties for the image */
     background-size: cover;
