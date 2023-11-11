@@ -11,12 +11,46 @@ import signal
 import sys    
 
 
+# NOTE: Section Header are generated using "ANSI Shadow" ascii art font.
+
+
 #  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗ 
 # ██╔════╝ ██║     ██╔═══██╗██╔══██╗██╔══██╗██║         ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
 # ██║  ███╗██║     ██║   ██║██████╔╝███████║██║         ███████╗█████╗     ██║   ██║   ██║██████╔╝
 # ██║   ██║██║     ██║   ██║██╔══██╗██╔══██║██║         ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝ 
 # ╚██████╔╝███████╗╚██████╔╝██████╔╝██║  ██║███████╗    ███████║███████╗   ██║   ╚██████╔╝██║     
 #  ╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝     
+
+# Configurable Session Length, in Seconds
+SESSION_LENGTH = 3600
+threads = []
+
+
+
+
+
+
+
+# ██████╗  █████╗ ████████╗ █████╗ ██████╗  █████╗ ███████╗███████╗    ██╗███╗   ██╗██╗████████╗
+# ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝    ██║████╗  ██║██║╚══██╔══╝
+# ██║  ██║███████║   ██║   ███████║██████╔╝███████║███████╗█████╗      ██║██╔██╗ ██║██║   ██║   
+# ██║  ██║██╔══██║   ██║   ██╔══██║██╔══██╗██╔══██║╚════██║██╔══╝      ██║██║╚██╗██║██║   ██║   
+# ██████╔╝██║  ██║   ██║   ██║  ██║██████╔╝██║  ██║███████║███████╗    ██║██║ ╚████║██║   ██║   
+# ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝╚═╝  ╚═══╝╚═╝   ╚═╝   
+
+
+
+
+
+
+
+
+
+
+##########################################
+#      User Database Setup               #
+##########################################
+
 
 # User Database Initialization
 users_connection = sqlite3.connect("users.db", check_same_thread=False)
@@ -28,7 +62,9 @@ CREATE TABLE IF NOT EXISTS users (
     last_name text NOT NULL,
     user_type text NOT NULL,
     username text NOT NULL,
-    password text NOT NULL
+    password text NOT NULL,
+    cityID int,
+    FOREIGN KEY(cityID) REFERENCES cities(cityID)
 )
 """)
 users_connection.commit()
@@ -45,9 +81,9 @@ def select_from_users(attribs, condition):
     users_cursor.close()
     return query_results
 
-def insert_into_users(first_name, last_name, user_type, username, password):
+def insert_into_users(first_name, last_name, user_type, username, password, cityID):
     users_cursor = users_connection.cursor()
-    query = f'INSERT INTO users(id,first_name,last_name,user_type,username,password) VALUES (NULL,"{first_name}","{last_name}","{user_type}","{username}","{hashlib.sha256(str.encode(password+"Alittlebitofsaltandpepper.")).hexdigest()}")'
+    query = f'INSERT INTO users(id,first_name,last_name,user_type,username,password, cityID) VALUES (NULL,"{first_name}","{last_name}","{user_type}","{username}","{hashlib.sha256(str.encode(password+"Alittlebitofsaltandpepper.")).hexdigest()}", {cityID})'
     users_connection.execute(query)
     users_connection.commit()
     users_cursor.close()
@@ -58,6 +94,17 @@ def delete_from_users(condition):
     users_connection.execute(query)
     users_connection.commit()
     users_cursor.close()
+
+
+
+
+
+
+
+
+##########################################
+#      Token Database Setup              #
+##########################################
 
 # Token Database Initialization
 tokens_connection = sqlite3.connect("tokens.db", check_same_thread=False)
@@ -99,10 +146,137 @@ def delete_from_tokens(condition):
     tokens_connection.commit()
     tokens_cursor.close()
 
-# Configurable Session Length, in Seconds
-SESSION_LENGTH = 3600
-threads = []
 
+
+
+
+
+
+
+
+
+##########################################
+#      City Database Setup               #
+##########################################
+cities_connection = sqlite3.connect("cities.db", check_same_thread=False)
+cities_cursor = cities_connection.cursor()
+cities_cursor.execute("""
+CREATE TABLE IF NOT EXISTS cities (
+    cityID integer PRIMARY KEY,
+    city text NOT NULL,
+    state text NOT NULL
+)
+""")
+cities_connection.commit()
+cities_cursor.close()
+
+
+# City DB Accesor Methods
+def select_from_cities(attribs, condition):
+    cities_cursor = cities_connection.cursor()
+    if condition != None:
+        query = f'SELECT {attribs} FROM cities WHERE {condition}'
+    else:
+        query = f'SELECT {attribs} FROM cities'
+    query_results = cities_connection.execute(query).fetchall()
+    cities_cursor.close()
+    return query_results
+
+def insert_into_cities(city, state):
+    cities_cursor = cities_connection.cursor()
+    query = f'INSERT INTO cities(cityID, city, state) VALUES (NULL, "{city}", "{state}")'
+    cities_connection.execute(query)
+    cities_connection.commit()
+    cities_cursor.close()
+
+def delete_from_cities(condition):
+    cities_cursor = cities_connection.cursor()
+    if condition != None:
+        query = f'DELETE FROM cities WHERE {condition}'
+    else:
+        query = 'DELETE FROM cities'
+    cities_connection.execute(query)
+    cities_connection.commit()
+    cities_cursor.close()
+
+
+
+
+
+
+
+
+
+
+
+##########################################
+#      Messages Database Setup           #
+##########################################
+messages_connection = sqlite3.connect("messages.db", check_same_thread=False)
+messages_cursor = messages_connection.cursor()
+messages_cursor.execute("""
+CREATE TABLE IF NOT EXISTS messages (
+    messageID integer PRIMARY KEY,
+    content text,
+    cityID text,
+    timestamp int,
+    author text,
+    FOREIGN KEY(author) REFERENCES users(username),
+    FOREIGN KEY(cityID) REFERENCES cities(cityID)
+)
+""")
+messages_connection.commit()
+messages_cursor.close()
+
+
+# Message DB Accesor Methods
+def select_from_messages(attribs, condition):
+    messages_cursor = messages_connection.cursor()
+    if condition != None:
+        query = f'SELECT {attribs} FROM messages WHERE {condition}'
+    else:
+        query = f'SELECT {attribs} FROM messages'
+    query_results = messages_connection.execute(query).fetchall()
+    messages_cursor.close()
+    return query_results
+
+def insert_into_messages(content, cityID, timestamp, author):
+    messages_cursor = messages_connection.cursor()
+    query = f'INSERT INTO messages(messageID, content, cityID, timestamp, author) VALUES (NULL, "{content}", {cityID}, {timestamp}, "{author}")'
+    messages_connection.execute(query)
+    messages_connection.commit()
+    messages_cursor.close()
+
+def delete_from_messages(condition):
+    messages_cursor = messages_connection.cursor()
+    if condition != None:
+        query = f'DELETE FROM messages WHERE {condition}'
+    else:
+        query = 'DELETE FROM messages'
+    messages_connection.execute(query)
+    messages_connection.commit()
+    messages_cursor.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗ 
+# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝ 
+# ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
+# ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║         ██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
+# ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
+# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝     
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
 # This allows you to see HTML/CSS changes when you reload the page when you're running and editing the app locally
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -133,12 +307,6 @@ app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 app.secret_key = os.urandom(32)
 CORS(app)
 
-# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗ 
-# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝ 
-# ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
-# ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║         ██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
-# ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
-# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝     
 
 @app.route('/', methods=["GET"])
 def base_page():
@@ -153,13 +321,14 @@ def auth():
     password = request.get_json().get('password')
     username = request.get_json().get('username')
 
-    query_results=select_from_users("user_type", f'username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"')
+    query_results=select_from_users("user_type,cityID", f'username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"')
     if(len(query_results) > 0):
         timestamp = (datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()
         token = hashlib.sha256(str.encode(str(timestamp))).hexdigest()
         session["token"] = token
         insert_into_tokens(token, timestamp+SESSION_LENGTH)
-
+        if(query_results[0][1] != None):
+            session["cityID"] = query_results[0][1]
         if(query_results[0][0] == "client"):
             session["type"] = "city"
             return {'window': 'city'}, 200
@@ -226,8 +395,10 @@ def admin_page():
     """
     Fetchs all users and just displays them on the admin page"""
     user_data = select_from_users("*", None)
-    users = [{'id': user[0], 'first_name': user[1], 'last_name': user[2], 'user_type': user[3], 'username': user[4]} for user in user_data]
-    return render_template('admin/dashboard.html', users=users)
+    city_data = select_from_cities("*", None)
+    users = [{'id': user[0], 'first_name': user[1], 'last_name': user[2], 'user_type': user[3], 'username': user[4], 'cityID': user[6]} for user in user_data]
+    cities = [{'cityID': city[0], 'city': city[1], 'state': city[2]} for city in city_data]
+    return render_template('admin/dashboard.html', users=users, cities=cities)
 
 @appAdmin.route('/create_user', methods=["GET", "POST"])
 def create_user():
@@ -237,7 +408,14 @@ def create_user():
         user_type = request.form['user_type']
         username = request.form['username']
         password = request.form['password']
-        insert_into_users(first_name, last_name, user_type, username, password)
+        city = request.form['city'].lower()
+        state = request.form['state'].lower()
+        query_results = select_from_cities("cityID", f'city="{city}" AND state="{state}"')
+        if(len(query_results) == 0):
+            print("city does not exist, creating")
+            insert_into_cities(city,state)
+            query_results = select_from_cities("cityID", f'city="{city}" AND state="{state}"')
+        insert_into_users(first_name, last_name, user_type, username, password, query_results[0][0])
         return redirect(url_for("admin_page"))
     return render_template('admin/create_user.html')
 
@@ -257,7 +435,7 @@ def run_admin_page():
 
 def token_watchdog():
     while True:
-        print("Token Cleanup")
+        # print("Token Cleanup")
         delete_from_tokens(f'expire_date<{(datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()}')
         time.sleep(60)
 
