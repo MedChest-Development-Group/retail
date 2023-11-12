@@ -1,5 +1,8 @@
-from flask import Flask, request, render_template, url_for, redirect, session, send_from_directory
+from flask import Flask, request, render_template, url_for, redirect, session, send_from_directory, send_file
+from flask_wtf import FlaskForm
 from flask_cors import CORS
+from hashlib import sha256
+from app.models.client_selector import ClientSelector
 from werkzeug.utils import secure_filename
 import threading
 import sqlite3
@@ -199,7 +202,8 @@ def delete_from_cities(condition):
     cities_connection.commit()
     cities_cursor.close()
 
-
+def initialize_client_selector():
+    return sorted([(result[0], ", ".join([name.title() for name in result[1:]])) for result in select_from_cities("*", None)], key= lambda x: x[1])
 
 
 
@@ -229,7 +233,7 @@ messages_connection.commit()
 messages_cursor.close()
 
 
-# Message DB Accesor Methods
+# Message DB Accessor Methods
 def select_from_messages(attribs, condition):
     messages_cursor = messages_connection.cursor()
     if condition != None:
@@ -259,6 +263,55 @@ def delete_from_messages(condition):
 
 
 
+##########################################
+#          File Database Setup           #
+##########################################
+# File database initialization
+# The files database can be created
+# However schema should be discussed among group
+# Especially since there clientIDs will determine who has access
+# But no client database is in place
+files_connection = sqlite3.connect("files.db", check_same_thread=False)
+files_cursor = files_connection.cursor()
+files_cursor.execute("""
+CREATE TABLE IF NOT EXISTS files (
+    fileHash text,
+    filename text,
+    cityID INTEGER,
+    PRIMARY KEY(fileHash, cityID),
+    FOREIGN KEY(cityID) REFERENCES cities(cityID)
+)
+""")
+files_connection.commit()
+files_cursor.close()
+
+# file DB Accessor Methods
+def select_from_files(attribs, condition):
+    files_cursor = files_connection.cursor()
+    if condition != None:
+        query = f'SELECT {attribs} FROM files WHERE {condition}'
+    else:
+        query = f'SELECT {attribs} FROM files'
+    query_results = files_connection.execute(query).fetchall()
+    files_cursor.close()
+    return query_results
+
+def insert_into_files(fileHash, filename, cityID):
+    files_cursor = files_connection.cursor()
+    query = f'INSERT INTO files(fileHash, filename, cityID) VALUES ("{fileHash}", "{filename}", {cityID})'
+    files_connection.execute(query)
+    files_connection.commit()
+    files_cursor.close()
+
+def delete_from_files(condition):
+    files_cursor = files_connection.cursor()
+    if condition != None:
+        query = f'DELETE FROM files WHERE {condition}'
+    else:
+        query = 'DELETE FROM files'
+    files_connection.execute(query)
+    files_connection.commit()
+    files_cursor.close()
 
 
 
@@ -287,21 +340,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PATH
 # 10 MB file limit
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
-# File database initialization
-# The files database can be created
-# However schema should be discussed among group
-# Especially since there clientIDs will determine who has access
-# But no client database is in place
-# files_connection = sqlite3.connect("files.db", check_same_thread=False)
-# files_cursor = files_connection.cursor()
-# files_cursor.execute("""
-# CREATE TABLE IF NOT EXISTS files (
-#     filename text PRIMARY KEY
-#     clientID INTEGER
-# )
-# """)
-# files_connection.commit()
-# files_cursor.close()
+
 
 # Configure app to support user sessions
 app.secret_key = os.urandom(32)
@@ -341,14 +380,31 @@ def auth():
 
 @app.route('/upload', methods=["GET"])
 def upload():
-    return render_template('upload.html')
+    form = ClientSelector()
+    form.clients.choices = initialize_client_selector()
+    return render_template('upload.html', form=form)
 
 @app.route('/uploader', methods=['POST'])
 def uploader():
     if request.method == 'POST':
         f = request.files['file']
         f.save(UPLOAD_FOLDER_PATH+secure_filename(f.filename))
-    return 'file uploaded successfully'
+        with open(UPLOAD_FOLDER_PATH+secure_filename(f.filename), mode='rb') as saved:
+            try:
+                insert_into_files(sha256(saved.read()).hexdigest(), secure_filename(f.filename), request.form.get('clients'))
+            except sqlite3.IntegrityError:
+                print("File already uploaded.")
+        
+    return redirect(url_for(".company", client=request.form.get('clients')))
+
+@app.route('/download/<hash>')
+def download(hash):
+    if token_valid() and "type" in session and session["type"] == "company":
+        file = select_from_files("*", f"fileHash = '{hash}'")[0]
+        return send_file(UPLOAD_FOLDER_PATH+file[1], 
+                     download_name=file[1], as_attachment=True)
+    else:
+        return redirect("/")
 
 
 @app.route("/logout", methods=["GET"])
@@ -364,10 +420,22 @@ def city():
     else:
         return redirect("/")
 
-@app.route('/company', methods=["GET"])
-def company():
+@app.route('/company', methods=["GET", "POST"])
+def company(client=1):
+    form = ClientSelector()
+    form.clients.choices = initialize_client_selector()
+    if request.method == "POST":
+        form.clients.default = request.form.get('clients')
+    elif "client" in request.args:
+        form.clients.default = request.args["client"]
+    else:
+        form.clients.default = client
+
+    form.process()
+    files = select_from_files("*", f"cityID = {form.clients.default}")
+
     if token_valid() and "type" in session and session["type"] == "company":
-        return render_template('company/home.html')
+        return render_template('company/home.html', form=form, files=files)
     else:
         return redirect("/")
 

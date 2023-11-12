@@ -143,10 +143,10 @@ button#loginButton:hover {
 
 
 /* Client Selection Tools Container */
-.client-selection-container {
+.client-selection-container, .client-files-container {
     padding-inline:5%;
     background-clip: content-box;
-    display: flex;
+    display: block;
     min-width: 100%;
     background-color: whitesmoke;
 }
