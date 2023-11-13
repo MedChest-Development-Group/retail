@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- If you would like to incorporate this into a page -->
+<!-- Embed the div and script provided below to your desired page  -->
+<body>
+    <div>
+        <h1 class="center">Upload file</h1>
+        <form action = "http://127.0.0.1:5000/uploader" method = "POST" enctype = "multipart/form-data">
+            <div>{{ form.clients.label }}</div>
+            <div>{{ form.clients }}</div>
+            <input type = "file" name = "file" />
+            <input type = "submit"/>
+        </form>
+    </div>
+</body>
+{% endblock %}
