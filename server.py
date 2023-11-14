@@ -386,14 +386,20 @@ def upload():
 
 @app.route('/uploader', methods=['POST'])
 def uploader():
-    if request.method == 'POST':
+    
+    if request.method == 'POST' and token_valid() and "type" in session and session["type"] == "company":
         f = request.files['file']
-        f.save(UPLOAD_FOLDER_PATH+secure_filename(f.filename))
-        with open(UPLOAD_FOLDER_PATH+secure_filename(f.filename), mode='rb') as saved:
-            try:
+        try:
+            f.save(UPLOAD_FOLDER_PATH+secure_filename(f.filename))
+            with open(UPLOAD_FOLDER_PATH+secure_filename(f.filename), mode='rb') as saved:
                 insert_into_files(sha256(saved.read()).hexdigest(), secure_filename(f.filename), request.form.get('clients'))
-            except sqlite3.IntegrityError:
-                print("File already uploaded.")
+        except sqlite3.IntegrityError:
+            print("File already uploaded.")
+        except IsADirectoryError:
+            print("No file provided.")
+    else:
+        return redirect("/")
+        
         
     return redirect(url_for(".company", client=request.form.get('clients')))
 
@@ -405,7 +411,16 @@ def download(hash):
                      download_name=file[1], as_attachment=True)
     else:
         return redirect("/")
-
+    
+@app.route('/deleter/<hash>/<cityID>')
+def delete(hash, cityID):
+    if token_valid() and "type" in session and session["type"] == "company":
+        os.remove(UPLOAD_FOLDER_PATH+select_from_files("filename", f"fileHash = '{hash}' AND cityID = '{cityID}'")[0][0])
+        delete_from_files(f"fileHash = '{hash}' AND cityID = '{cityID}'")
+        # print("File deleted.")
+        return redirect(url_for(".company", client=cityID))
+    else:
+        return redirect("/")
 
 @app.route("/logout", methods=["GET"])
 def logout():
