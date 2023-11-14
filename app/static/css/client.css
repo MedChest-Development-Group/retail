@@ -32,25 +32,56 @@ html {
     margin-right: 1em;
     padding-left: 1em;
     padding-right: 1em;
+    height: 100%;
 }
 
 .board {
     display: flex;
     justify-content: space-around;
-    padding: 10px;
+    padding: 2px;
+    height: 80%
 }
 
 .column {
     flex: 1;
     background-color: #afafaf;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    margin: 10px;
+    padding: 8px;
+    margin: 5px;
+    overflow-y: auto;
 }
+
+
 
 .column header {
     font-size: 1.2em;
     font-weight: bold;
     margin-bottom: 10px;
+}
+
+.task {
+    background-color: #ffffff; /* White background color */
+    border: 1px solid #ddd; /* Border color (adjust as needed) */
+    border-radius: 8px; /* Rounded corners, adjust the value for desired roundness */
+    padding: 10px; /* Adjust padding as needed */
+    margin-bottom: 10px; /* Adjust margin as needed */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: -3%;
+    padding: 2px;
+    background-color: #afafaf;
+    z-index: 1;
+}
+
+.button-with-padding {
+    padding: 5px; /* Adjust the value according to your preference */
+    margin: 2px;
 }
