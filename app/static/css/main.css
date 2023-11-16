@@ -200,13 +200,14 @@ button#loginButton:hover {
 
 /* Admin Create User */
 .createUser-container {
-    padding: 20%;
+    padding: 20px;
     width: 100%;
     box-sizing: border-box;
 }
 
 .createUser-form {
-    width: 100%;
+    width: 30%;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -219,7 +220,7 @@ input#city,
 input#state,
 input#username-admin,
 input#password-admin {
-    width: 100%;
+    width: 200%;
     padding: 12px 20px;
     margin: 8px 0;
     display: inline-block;
@@ -239,6 +240,7 @@ input#password-admin {
 }
 
 input#createUserButton {
+    display: block;
     width: 60%;
     background-color: #04AA6D;
     color: white;
@@ -258,11 +260,13 @@ input#createUserButton:hover {
     padding: 20px;
 }
 button#createNewUserButton {
-    width: 15%;
+    display: block;
+    width: 30%;
+    font-size: 1.2em; 
     background-color: #04AA6D;
     color: white;
     padding: 14px 20px;
-    margin: 8px 0;
+    margin: 8px auto;
     border: none;
     border-radius: 10px;
     cursor: pointer;
