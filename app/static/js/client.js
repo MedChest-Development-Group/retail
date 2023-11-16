@@ -78,6 +78,26 @@ function updateTask(taskElement) {
     const newContent = prompt('Enter the Retailer:');
     if(newContent){
         taskElement.textContent = newContent;
+        const buttons = document.createElement('div');
+
+        // Create a delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn btn-danger button-with-padding';
+        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        deleteButton.addEventListener('click', () => deleteTask(taskElement));
+        
+    
+        // Create a update button
+        const updatebutton = document.createElement('button');
+        updatebutton.className = `btn btn-primary button-with-padding`;
+        updatebutton.innerHTML = `<i class="fas fa-pencil-alt"></i>`;
+        updatebutton.addEventListener('click', () => updateTask(taskElement));
+    
+    
+        buttons.appendChild(updatebutton);
+        buttons.appendChild(deleteButton);
+    
+        taskElement.appendChild(buttons);
         updateCard(taskElement);
     }
 }

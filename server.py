@@ -221,10 +221,12 @@ messages_cursor.execute(
     """
 CREATE TABLE IF NOT EXISTS messages (
     messageID integer PRIMARY KEY,
+    relativeID integer,
     content text,
     cityID text,
     timestamp int,
     author text,
+    edited int,
     FOREIGN KEY(author) REFERENCES users(username),
     FOREIGN KEY(cityID) REFERENCES cities(cityID)
 )
@@ -248,7 +250,7 @@ def select_from_messages(attribs, condition):
 
 def insert_into_messages(messageID, content, cityID, timestamp, author):
     messages_cursor = messages_connection.cursor()
-    query = f'INSERT INTO messages(messageID, content, cityID, timestamp, author) VALUES ({messageID}, "{content}", {cityID}, {timestamp}, "{author}")'
+    query = f'INSERT INTO messages(messageID, relativeID, content, cityID, timestamp, author) VALUES (NULL, {messageID}, "{content}", {cityID}, {timestamp}, "{author}")'
     messages_connection.execute(query)
     messages_connection.commit()
     messages_cursor.close()
@@ -328,6 +330,7 @@ cards_cursor.execute(
     """
 CREATE TABLE IF NOT EXISTS cards (
     cardID int PRIMARY KEY,
+    relativeID integer,
     content text,
     columnID text,
     cityID int,
@@ -353,7 +356,7 @@ def select_from_cards(attribs, condition):
 
 def insert_into_cards(cardID, content, columnID, cityID):
     cards_cursor = cards_connection.cursor()
-    query = f'INSERT INTO cards(cardID, content, columnID, cityID) VALUES ({cardID}, "{content}", "{columnID}", {cityID})'
+    query = f'INSERT INTO cards(cardID, relativeID, content, columnID, cityID) VALUES (NULL, {cardID}, "{content}", "{columnID}", {cityID})'
     cards_connection.execute(query)
     cards_connection.commit()
     cards_cursor.close()
@@ -549,7 +552,7 @@ def failed_auth():
 #############################
 @app.route("/get_cards", methods=["POST"])
 def get_cards():
-    query_results = select_from_cards("*", f'cityID={session["cityID"]}')
+    query_results = select_from_cards("relativeID,content,columnID", f'cityID={session["cityID"]}')
     cards = []
     for i in query_results:
         json_object = {"id": i[0], "content": i[1], "column": i[2]}
@@ -573,7 +576,7 @@ def update_card():
     cardID = request.get_json().get("id")
     content = request.get_json().get("text")
     columnID = request.get_json().get("column")
-    update_in_cards(f'content="{content}",columnID="{columnID}"', f"cardID={cardID}")
+    update_in_cards(f'content="{content}",columnID="{columnID}"', f"relativeID={cardID} AND cityID={session['cityID']}")
     return make_response("", 200)
 
 
@@ -582,7 +585,7 @@ def delete_card():
     cardID = request.get_json().get("id")
     content = request.get_json().get("text")
     columnID = request.get_json().get("column")
-    delete_from_cards(f"cardID={cardID}")
+    delete_from_cards(f'relativeID={cardID} AND cityID={session["cityID"]}')
     return make_response("", 200)
 
 
@@ -601,11 +604,11 @@ def add_message():
 
 @app.route('/get_messages', methods=["POST"])
 def get_messages():
-    query_results = select_from_messages("*", f'cityID={session["cityID"]}')
+    query_results = select_from_messages("relativeID,content,author,timestamp", f'cityID={session["cityID"]}')
     print(query_results)
     messages = []
     for i in query_results:
-        json_object = {'id': i[0],'content': i[1],'author': i[4], 'timestamp': i[3]}
+        json_object = {'id': i[0],'content': i[1],'author': i[2], 'timestamp': i[3]}
         messages.append(json_object)
     return {'messages': messages}, 200
 
