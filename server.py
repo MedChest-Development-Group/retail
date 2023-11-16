@@ -450,7 +450,7 @@ def company(client=1):
     files = select_from_files("*", f"cityID = {form.clients.default}")
 
     if token_valid() and "type" in session and session["type"] == "company":
-        return render_template('company/home.html', form=form, files=files)
+        return render_template('company/home.html', form=form, files=sorted(files))
     else:
         return redirect("/")
 

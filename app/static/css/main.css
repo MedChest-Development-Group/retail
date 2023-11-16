@@ -189,13 +189,89 @@ button#loginButton:hover {
     background-color: grey;
     width: 50%;
     position: relative;
-    /* padding: 20%; */
-    /* padding-top:5%; */
-    /* padding-bottom:5%; */
-    /* background-clip: content-box;  */
-    /* display: flex; */
     margin:1%;
-    /* max-width: max-content; */
+}
+
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    line-height: 1.5;
+}
+
+html {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    padding: 1em;
+}
+
+.logout-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.content-container {
+    padding-left: 4em;
+    padding-right: 4em;
+}
+
+.horizontal-container {
+    display: flex;
+    padding: 1em;
+}
+
+.section-container {
+    color: #f6f5f6;
+    background-color: #363948;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-radius: 8px;
+    height: 100%;
+}
+
+.underlined-heading {
+    border-bottom: 2px solid #78be20;
+    padding: 5px;
+}
+
+
+
+/* Style for the submit button */
+.delete {
+    background-color: #363948; /* Green background color */
+    color: red; /* White text color */
+    border: none; /* Remove border */
+    border-radius: 5px;
+    /* padding: 5px 10px; Add padding */
+    cursor: pointer; /* Add cursor pointer on hover */
+    float:right;
+}
+
+
+select, #uploadBox, #uploadSubmit {
+    background-color:#363948
+}
+
+.listed-file, .listed-file:hover{
+    color:rgb(255, 255, 255);
+}
+
+.files-list{
+    padding: 2%;
+    max-height: 100px;
+    width: 30%;
+    overflow-y: scroll;
+    border:1px solid #78be20;
+    
 }
 
 /* admin table stuff */
