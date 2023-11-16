@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, url_for, redirect, session, send_from_directory, send_file
+from flask import Flask, request, render_template, url_for, redirect, session, send_from_directory, send_file, make_response
 from flask_wtf import FlaskForm
 from flask_cors import CORS
 from hashlib import sha256
@@ -316,8 +316,55 @@ def delete_from_files(condition):
 
 
 
+# cards database
+cards_connection = sqlite3.connect("cards.db", check_same_thread=False)
+cards_cursor = cards_connection.cursor()
+cards_cursor.execute("""
+CREATE TABLE IF NOT EXISTS cards (
+    cardID int PRIMARY KEY,
+    content text,
+    columnID text,
+    cityID int,
+    FOREIGN KEY(cityID) REFERENCES cities(cityID)
+)
+""")
+cards_connection.commit()
+cards_cursor.close()
 
+# card DB Accessor Methods
+def select_from_cards(attribs, condition):
+    cards_cursor = cards_connection.cursor()
+    if condition != None:
+        query = f'SELECT {attribs} FROM cards WHERE {condition}'
+    else:
+        query = f'SELECT {attribs} FROM cards'
+    query_results = cards_connection.execute(query).fetchall()
+    cards_cursor.close()
+    return query_results
 
+def insert_into_cards(cardID, content, columnID, cityID):
+    cards_cursor = cards_connection.cursor()
+    query = f'INSERT INTO cards(cardID, content, columnID, cityID) VALUES ({cardID}, "{content}", "{columnID}", {cityID})'
+    cards_connection.execute(query)
+    cards_connection.commit()
+    cards_cursor.close()
+
+def update_in_cards(updates, condition):
+    cards_cursor = cards_connection.cursor()
+    query = f'UPDATE cards SET {updates} WHERE {condition}'
+    cards_connection.execute(query)
+    cards_connection.commit()
+    cards_cursor.close()
+
+def delete_from_cards(condition):
+    cards_cursor = cards_connection.cursor()
+    if condition != None:
+        query = f'DELETE FROM cards WHERE {condition}'
+    else:
+        query = 'DELETE FROM cards'
+    cards_connection.execute(query)
+    cards_connection.commit()
+    cards_cursor.close()
 
 
 
@@ -368,7 +415,7 @@ def auth():
         insert_into_tokens(token, timestamp+SESSION_LENGTH)
         if(query_results[0][1] != None):
             session["cityID"] = query_results[0][1]
-        if(query_results[0][0] == "client"):
+        if(query_results[0][0] == "city"):
             session["type"] = "city"
             return {'window': 'city'}, 200
         else:
@@ -431,7 +478,7 @@ def logout():
 @app.route('/city', methods=["GET"])
 def city():
     if token_valid() and "type" in session and session["type"] == "city":
-        return render_template('city/home.html')
+        return render_template('city/home.html', customer_name=select_from_cities("city", f'cityID={session["cityID"]}')[0][0].title())
     else:
         return redirect("/")
 
@@ -459,9 +506,54 @@ def failed_auth():
     return render_template('error/failed_auth.html')
 
 
+#############################
+#  Progress Board Endpoints
+#############################
+@app.route('/get_cards', methods=["POST"])
+def get_cards():
+    query_results = select_from_cards("*", f'cityID={session["cityID"]}')
+    cards = []
+    for i in query_results:
+        json_object = {'id': i[0],'content': i[1],'column': i[2]}
+        cards.append(json_object)
+    # print(cards)
+    return {'cards': cards}, 200
+
+@app.route('/add_card', methods=["POST"])
+def add_card():
+    cardID = request.get_json().get('id')
+    content = request.get_json().get('text')
+    columnID = request.get_json().get('column')
+    insert_into_cards(cardID, content, columnID, session["cityID"])
+    return make_response('',200)
+
+@app.route('/update_card', methods=["POST"])
+def update_card():
+    # Send this endpoint a card with the same ID, but updated content, and it will replace it.
+    cardID = request.get_json().get('id')
+    content = request.get_json().get('text')
+    columnID = request.get_json().get('column')
+    update_in_cards(f'content="{content}",columnID="{columnID}"', f'cardID={cardID}')
+    return make_response('',200)
+
+@app.route('/delete_card', methods=["POST"])
+def delete_card():
+    cardID = request.get_json().get('id')
+    content = request.get_json().get('text')
+    columnID = request.get_json().get('column')
+    delete_from_cards(f'cardID={cardID}')
+    return make_response('',200)
+
+
+#############################
+#  Token Validator
+#############################
 def token_valid():
-    query_results = select_from_tokens("token", f'token="{session["token"]}"')
-    return True if len(query_results) > 0 else False
+    try:
+        query_results = select_from_tokens("token", f'token="{session["token"]}"')
+        return True if len(query_results) > 0 else False
+    except:
+        return False
 
 
 #  █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗

@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="title-container">
-        <h1>{{ customer_name }} Homepage</h1>
+        <h1>{{ customer_name }}'s Homepage</h1>
     </div>
     <div class="content-container">
         <!-- Banner here -->
@@ -23,21 +23,28 @@
                 <h2>Data Tutorials</h2>
             </div>
         </div>
-        <div class="horizontal-container" style="height: 50%;">
+        <div class="horizontal-container" style="height: 50vh;">
             <div class="section-container" style="width: 70%;">
                 <!-- Retailer progress -->
                 <h2>Progress Board</h2>
-                <div>
-                    <!-- Progress Board Widget -->
-                    <div class="board">
-                        <div class="column" id="inProgressColumn">
+                <!-- Progress Board Widget -->
+                <div class="board">
+                    <div class="column" id="inProgressColumn">
+                        <div class="column-header">
                             <header>In Progress</header>
+                            <button class="btn btn-success"><i class="fas fa-plus"></i></button>
                         </div>
-                        <div class="column" id="wonColumn">
+                    </div>
+                    <div class="column" id="wonColumn">
+                        <div class="column-header">
                             <header>Won</header>
+                            <button class="btn btn-success"><i class="fas fa-plus"></i></button>
                         </div>
-                        <div class="column" id="lostColumn">
+                    </div>
+                    <div class="column" id="lostColumn">
+                        <div class="column-header">
                             <header>Lost</header>
+                            <button class="btn btn-success"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
                 </div>
