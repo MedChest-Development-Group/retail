@@ -1,10 +1,37 @@
 {% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
 {% block content %}
     <h1>Company Page</h1>
-    <h2>Dashboard</h2>
+    <h2>Portal</h2>
     <!-- Container to select client -->
     <div class="client-selection-container">
-        
+        <!-- <select name="client" id="client-selector"></select> -->
+        <form id="client-selection" action='/company' method="post">
+            <label for="clients">Client</label>
+            <div>{{ render_field(form.clients, onchange='this.form.submit()')}}</div>
+        </form>
+    </div>
+
+    <div class="client-files-container" id="files">
+        <label>Files</label>
+        <div>
+            <form action = "http://127.0.0.1:5000/uploader" method = "POST" enctype = "multipart/form-data" onsubmit="if (document.getElementById('uploadBox').files.length > 0) alert('File Uploaded')">
+                <input type = "file" name = "file" id="uploadBox"/>
+                {{ render_field(form.clients, style='display:none')}}
+                <input type = "submit"/>
+            </form>
+        </div>
+        <div>
+
+            {% for file in files %}
+            <h5>
+                <a id="{{file[0]}}" href="http://127.0.0.1:5000/download/{{file[0]}}">
+                    {{file[1]}}        
+                </a>
+                <input type="button" onclick="location.href='http://127.0.0.1:5000/deleter/{{file[0]}}/{{file[2]}}';alert('File Deleted')" value="X" />
+            </h5>
+            {% endfor %}
+        </div>
     </div>
     <!-- Container for Details -->
     <div class="client-container">

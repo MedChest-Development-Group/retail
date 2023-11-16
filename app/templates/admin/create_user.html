@@ -16,6 +16,13 @@
             <option value="RS employee">RS Employee</option>
             <option value="admin">Admin</option>
         </select>
+
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+    
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" required>
+    
         
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
@@ -34,7 +41,9 @@
             last_name: document.getElementById("last_name").value,
             user_type: document.getElementById("user_type").value,
             username: document.getElementById("username").value,
-            password: document.getElementById("password").value
+            password: document.getElementById("password").value,
+            city: document.getElementById("city").value,
+            state: document.getElementById("state").value,
         };
         var loginData = JSON.stringify(loginJSON);
         fetch("http://127.0.0.1:5000/create_user", {
