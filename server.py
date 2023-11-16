@@ -244,9 +244,9 @@ def select_from_messages(attribs, condition):
     messages_cursor.close()
     return query_results
 
-def insert_into_messages(content, cityID, timestamp, author):
+def insert_into_messages(messageID, content, cityID, timestamp, author):
     messages_cursor = messages_connection.cursor()
-    query = f'INSERT INTO messages(messageID, content, cityID, timestamp, author) VALUES (NULL, "{content}", {cityID}, {timestamp}, "{author}")'
+    query = f'INSERT INTO messages(messageID, content, cityID, timestamp, author) VALUES ({messageID}, "{content}", {cityID}, {timestamp}, "{author}")'
     messages_connection.execute(query)
     messages_connection.commit()
     messages_cursor.close()
@@ -407,12 +407,14 @@ def auth():
     password = request.get_json().get('password')
     username = request.get_json().get('username')
 
-    query_results=select_from_users("user_type,cityID", f'username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"')
+    query_results=select_from_users("user_type,cityID,first_name,last_name", f'username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"')
     if(len(query_results) > 0):
         timestamp = (datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()
         token = hashlib.sha256(str.encode(str(timestamp))).hexdigest()
         session["token"] = token
         insert_into_tokens(token, timestamp+SESSION_LENGTH)
+        session["first_name"] = query_results[0][2]
+        session["last_name"] = query_results[0][3]
         if(query_results[0][1] != None):
             session["cityID"] = query_results[0][1]
         if(query_results[0][0] == "city"):
@@ -478,7 +480,7 @@ def logout():
 @app.route('/city', methods=["GET"])
 def city():
     if token_valid() and "type" in session and session["type"] == "city":
-        return render_template('city/home.html', customer_name=select_from_cities("city", f'cityID={session["cityID"]}')[0][0].title())
+        return render_template('city/home.html', customer_name=select_from_cities("city", f'cityID={session["cityID"]}')[0][0].title(), first_name=session["first_name"], last_name=session["last_name"])
     else:
         return redirect("/")
 
@@ -544,6 +546,29 @@ def delete_card():
     delete_from_cards(f'cardID={cardID}')
     return make_response('',200)
 
+
+
+#############################
+#  Messaging Endpoints
+#############################    
+@app.route('/add_message', methods=["POST"])
+def add_message():
+    messageID = request.get_json().get('id')
+    content = request.get_json().get('content')
+    author = request.get_json().get('author')
+    timestamp = request.get_json().get('timestamp')
+    insert_into_messages(messageID, content, session["cityID"], timestamp, author)
+    return make_response('',200)
+
+@app.route('/get_messages', methods=["POST"])
+def get_messages():
+    query_results = select_from_messages("*", f'cityID={session["cityID"]}')
+    print(query_results)
+    messages = []
+    for i in query_results:
+        json_object = {'id': i[0],'content': i[1],'author': i[4], 'timestamp': i[3]}
+        messages.append(json_object)
+    return {'messages': messages}, 200
 
 #############################
 #  Token Validator
