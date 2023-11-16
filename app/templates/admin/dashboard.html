@@ -1,9 +1,10 @@
 <!-- Quick testing version here - Michael -->
 {% extends "base.html" %}
 {% block content %}
+<div class="dashboard-container">
     <h1>Admin Dashboard</h1>
     <h2>Create users</h2>
-    <button onclick="location.href='/create_user'">Add New User</button>
+    <button onclick="location.href='/create_user'" id="createNewUserButton">Add New User</button>
     <h2>User List</h2>
     <div class="users-list">
         <table border="1">
@@ -33,7 +34,7 @@
         </table>
     </div>
     <h2>City List</h2>
-    <div class="users-list">
+    <div class="city-list">
         <table border="1">
             <thead>
                 <tr>
@@ -53,4 +54,5 @@
             </tbody>
         </table>
     </div>
+</div>
 {% endblock %}

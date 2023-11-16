@@ -253,7 +253,24 @@ input#createUserButton:hover {
     background-color: #45a049;
 }
 
-/* admin table stuff */
+/* admin dashboard stuff */
+.dashboard-container {
+    padding: 20px;
+}
+button#createNewUserButton {
+    width: 15%;
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button#createNewUserButton:hover {
+    background-color: #78a37b;
+}
 
 .users-list {
     width: 80%;
@@ -278,5 +295,31 @@ input#createUserButton:hover {
 }
 
 .users-list tr:hover {
+    background-color: #f5f5f5;
+}
+
+.city-list {
+    width: 80%;
+    margin: auto;
+}
+
+.city-list table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: auto;
+}
+
+.city-list th, .city-list td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.city-list th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.city-list tr:hover {
     background-color: #f5f5f5;
 }
