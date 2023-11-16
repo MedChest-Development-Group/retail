@@ -198,7 +198,63 @@ button#loginButton:hover {
     /* max-width: max-content; */
 }
 
+/* Admin Create User */
+.createUser-container {
+    padding: 20%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.createUser-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+input#first_name, 
+input#last_name, 
+input#city, 
+input#state,
+input#username-admin,
+input#password-admin {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+#user_type {
+    width: 60%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+input#createUserButton {
+    width: 60%;
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+input#createUserButton:hover {
+    background-color: #45a049;
+}
+
 /* admin table stuff */
+
 .users-list {
     width: 80%;
     margin: auto;
