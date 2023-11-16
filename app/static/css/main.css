@@ -17,6 +17,8 @@ body {
     text-align: center;
 }
 
+
+
 .login-container {
     position: relative;
     width: 100%;
@@ -32,18 +34,18 @@ body {
     bottom: 0;
     top: 0;
     min-height: 100vh;
-    min-width: 50%;
-    max-width: 50%;
+    min-width: 60%;
+    max-width: 60%;
     /*background-color: var(--retail-green);*/
-    background-image: url('../imgs/chicago-night-727634347.jpg');
+    background-image: url('../imgs/bham.jpg');
     background-size: cover; /* Adjust as needed */
     background-repeat: no-repeat; /* Adjust as needed */
     background-position: center center; /* Adjust as needed */
     font-family: 'Lobster', sans-serif;
     text-align: center;
     align-items: center;
-    border-bottom-right-radius: 5%;
-    border-top-right-radius: 5%;
+    /* border-bottom-right-radius: 5%;
+    border-top-right-radius: 5%; */
 }
 
 .portal-rule {
@@ -70,8 +72,8 @@ body {
     justify-content: center;
     align-items: center;
 
-    width: 500px;
-    height: 350px;
+    width: 45%;
+    height: 35%;
 }
 
 .welcome-text {
@@ -93,8 +95,8 @@ body {
     justify-content: center; 
 } */
 .login-form-div {
-    left: 50%; 
-    width: 50%; /* Set this to 100% to use the full width */
+    left: 60%;
+    width: 40%;
     min-height: 100vh;
     position: absolute;
     display: flex;
@@ -274,7 +276,84 @@ html {
     
 }
 
-/* admin table stuff */
+/* Admin Create User */
+.createUser-container {
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.createUser-form {
+    width: 30%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+input#first_name, 
+input#last_name, 
+input#city, 
+input#state,
+input#username,
+input#password {
+    width: 200%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+#user_type {
+    width: 60%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+input#createUserButton {
+    display: block;
+    width: 60%;
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+input#createUserButton:hover {
+    background-color: #45a049;
+}
+
+/* admin dashboard stuff */
+.dashboard-container {
+    padding: 20px;
+}
+button#createNewUserButton {
+    display: block;
+    width: 30%;
+    font-size: 1.2em; 
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px auto;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button#createNewUserButton:hover {
+    background-color: #78a37b;
+}
+
 .users-list {
     width: 80%;
     margin: auto;
@@ -299,4 +378,11 @@ html {
 
 .users-list tr:hover {
     background-color: #f5f5f5;
+}
+
+.user-create-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }

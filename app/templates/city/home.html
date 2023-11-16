@@ -3,58 +3,81 @@
 {% block content %}
 <head>
     <meta charset="utf-8" />
-    <title> {{ customer_name }} Homepage </title>
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/client.css') }}">
-    <meta name="description" content="My retail strategies page" />
 </head>
+<script>
+    const currentAuthor = "{{ first_name }}"+" "+"{{ last_name }}";
+</script>
 <body>
     <div class="title-container">
-        <h1>{{ customer_name }} Homepage</h1>
+        <i></i>
+        <h1>{{ customer_name }}'s Homepage</h1>
+        <div class="logout-container">
+            <form action="{{ url_for('logout') }}">
+                <button type="submit" class="btn btn-danger center">Logout</button>
+            </form>
+        </div>
     </div>
     <div class="content-container">
         <!-- Banner here -->
         <div class="horizontal-container" style="height: 30%;">
             <div class="section-container" style="width: 50%;">
                 <!-- Imported data -->
-                <h2>Data Imported</h2>
+                <h2 class="underlined-heading">Data Imported</h2>
             </div>
             <div class="section-container" style="width: 50%;">
                 <!-- Data tutorials -->
-                <h2>Data Tutorials</h2>
+                <h2 class="underlined-heading">Data Tutorials</h2>
             </div>
         </div>
-        <div class="horizontal-container" style="height: 50%;">
+        <div class="horizontal-container" style="height: 50vh;">
             <div class="section-container" style="width: 70%;">
                 <!-- Retailer progress -->
-                <h2>Progress Board</h2>
-                <div>
-                    <!-- Progress Board Widget -->
-                    <div class="board">
-                        <div class="column" id="inProgressColumn">
+                <h2 class="underlined-heading">Progress Board</h2>
+                <!-- Progress Board Widget -->
+                <div class="board">
+                    <div class="column" id="inProgressColumn">
+                        <div class="column-header">
                             <header>In Progress</header>
+                            <button class="btn btn-success"><i class="fas fa-plus"></i></button>
                         </div>
-                        <div class="column" id="wonColumn">
+                    </div>
+                    <div class="column" id="wonColumn">
+                        <div class="column-header">
                             <header>Won</header>
+                            <button class="btn btn-success"><i class="fas fa-plus"></i></button>
                         </div>
-                        <div class="column" id="lostColumn">
+                    </div>
+                    <div class="column" id="lostColumn">
+                        <div class="column-header">
                             <header>Lost</header>
+                            <button class="btn btn-success"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="section-container" style="width: 30%;">
                 <!-- PDF stuff, marketing material -->
-                <h2>Marketing Material</h2>
+                <h2 class="underlined-heading">Marketing Material</h2>
             </div>
         </div>
         <div class="horizontal-container" style="height: 50%;">
             <div class="section-container" style="width: 70%;">
                 <!-- Should be messenger -->
-                <h2>Messenger</h2>
+                <h2 class="underlined-heading">Messenger</h2>
+                <div class="messages">
+                    <div id="messaging-section" class="messaging-section">
+                        
+                    </div>
+                    <form class="message-form">
+                        <textarea id="message" name="message" rows="2" cols="50" required></textarea>
+                        <button class="button">Submit</button>
+                    </form>
+                </div>
             </div>
             <div class="section-container" style="width: 30%;">
                 <!-- Should be tableau or graph visuals -->
-                <h2>Visuals</h2>
+                <h2 class="underlined-heading">Visuals</h2>
             </div>
         </div>
     </div>
