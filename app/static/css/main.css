@@ -257,7 +257,7 @@ html {
 }
 
 
-select, #uploadBox, #uploadSubmit {
+.client-selector, #uploadBox, #uploadSubmit {
     background-color:#363948
 }
 

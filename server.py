@@ -338,7 +338,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 UPLOAD_FOLDER_PATH = 'app/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PATH
 # 10 MB file limit
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024
 
 
 
@@ -390,6 +390,8 @@ def uploader():
     if request.method == 'POST' and token_valid() and "type" in session and session["type"] == "company":
         f = request.files['file']
         try:
+            if not os.path.exists(UPLOAD_FOLDER_PATH):
+                os.makedirs(UPLOAD_FOLDER_PATH)
             f.save(UPLOAD_FOLDER_PATH+secure_filename(f.filename))
             with open(UPLOAD_FOLDER_PATH+secure_filename(f.filename), mode='rb') as saved:
                 insert_into_files(sha256(saved.read()).hexdigest(), secure_filename(f.filename), request.form.get('clients'))
