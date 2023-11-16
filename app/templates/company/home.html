@@ -15,8 +15,8 @@
     <div class="client-files-container" id="files">
         <label>Files</label>
         <div>
-            <form action = "http://127.0.0.1:5000/uploader" method = "POST" enctype = "multipart/form-data" onsubmit="alert('File Uploaded')">
-                <input type = "file" name = "file" />
+            <form action = "http://127.0.0.1:5000/uploader" method = "POST" enctype = "multipart/form-data" onsubmit="if (document.getElementById('uploadBox').files.length > 0) alert('File Uploaded')">
+                <input type = "file" name = "file" id="uploadBox"/>
                 {{ render_field(form.clients, style='display:none')}}
                 <input type = "submit"/>
             </form>
@@ -28,6 +28,7 @@
                 <a id="{{file[0]}}" href="http://127.0.0.1:5000/download/{{file[0]}}">
                     {{file[1]}}        
                 </a>
+                <input type="button" onclick="location.href='http://127.0.0.1:5000/deleter/{{file[0]}}/{{file[2]}}';alert('File Deleted')" value="X" />
             </h5>
             {% endfor %}
         </div>
