@@ -1,4 +1,14 @@
-from flask import Flask, request, render_template, url_for, redirect, session, send_from_directory, send_file
+from flask import (
+    Flask,
+    request,
+    render_template,
+    url_for,
+    redirect,
+    session,
+    send_from_directory,
+    send_file,
+    make_response,
+)
 from flask_wtf import FlaskForm
 from flask_cors import CORS
 from hashlib import sha256
@@ -11,43 +21,30 @@ from datetime import datetime
 import time
 import os
 import signal
-import sys    
+import sys
 
 
 # NOTE: Section Header are generated using "ANSI Shadow" ascii art font.
 
 
-#  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗ 
+#  ██████╗ ██╗      ██████╗ ██████╗  █████╗ ██╗         ███████╗███████╗████████╗██╗   ██╗██████╗
 # ██╔════╝ ██║     ██╔═══██╗██╔══██╗██╔══██╗██║         ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
 # ██║  ███╗██║     ██║   ██║██████╔╝███████║██║         ███████╗█████╗     ██║   ██║   ██║██████╔╝
-# ██║   ██║██║     ██║   ██║██╔══██╗██╔══██║██║         ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝ 
-# ╚██████╔╝███████╗╚██████╔╝██████╔╝██║  ██║███████╗    ███████║███████╗   ██║   ╚██████╔╝██║     
-#  ╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝     
+# ██║   ██║██║     ██║   ██║██╔══██╗██╔══██║██║         ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝
+# ╚██████╔╝███████╗╚██████╔╝██████╔╝██║  ██║███████╗    ███████║███████╗   ██║   ╚██████╔╝██║
+#  ╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝
 
 # Configurable Session Length, in Seconds
 SESSION_LENGTH = 3600
 threads = []
 
 
-
-
-
-
-
 # ██████╗  █████╗ ████████╗ █████╗ ██████╗  █████╗ ███████╗███████╗    ██╗███╗   ██╗██╗████████╗
 # ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝    ██║████╗  ██║██║╚══██╔══╝
-# ██║  ██║███████║   ██║   ███████║██████╔╝███████║███████╗█████╗      ██║██╔██╗ ██║██║   ██║   
-# ██║  ██║██╔══██║   ██║   ██╔══██║██╔══██╗██╔══██║╚════██║██╔══╝      ██║██║╚██╗██║██║   ██║   
-# ██████╔╝██║  ██║   ██║   ██║  ██║██████╔╝██║  ██║███████║███████╗    ██║██║ ╚████║██║   ██║   
-# ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝╚═╝  ╚═══╝╚═╝   ╚═╝   
-
-
-
-
-
-
-
-
+# ██║  ██║███████║   ██║   ███████║██████╔╝███████║███████╗█████╗      ██║██╔██╗ ██║██║   ██║
+# ██║  ██║██╔══██║   ██║   ██╔══██║██╔══██╗██╔══██║╚════██║██╔══╝      ██║██║╚██╗██║██║   ██║
+# ██████╔╝██║  ██║   ██║   ██║  ██║██████╔╝██║  ██║███████║███████╗    ██║██║ ╚████║██║   ██║
+# ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝╚═╝  ╚═══╝╚═╝   ╚═╝
 
 
 ##########################################
@@ -58,7 +55,8 @@ threads = []
 # User Database Initialization
 users_connection = sqlite3.connect("users.db", check_same_thread=False)
 users_cursor = users_connection.cursor()
-users_cursor.execute("""
+users_cursor.execute(
+    """
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     first_name text NOT NULL,
@@ -69,20 +67,23 @@ CREATE TABLE IF NOT EXISTS users (
     cityID int,
     FOREIGN KEY(cityID) REFERENCES cities(cityID)
 )
-""")
+"""
+)
 users_connection.commit()
 users_cursor.close()
+
 
 # User DB Accesor Methods
 def select_from_users(attribs, condition):
     users_cursor = users_connection.cursor()
     if condition != None:
-        query = f'SELECT {attribs} FROM users WHERE {condition}'
+        query = f"SELECT {attribs} FROM users WHERE {condition}"
     else:
-        query = f'SELECT {attribs} FROM users'
+        query = f"SELECT {attribs} FROM users"
     query_results = users_connection.execute(query).fetchall()
     users_cursor.close()
     return query_results
+
 
 def insert_into_users(first_name, last_name, user_type, username, password, cityID):
     users_cursor = users_connection.cursor()
@@ -91,18 +92,13 @@ def insert_into_users(first_name, last_name, user_type, username, password, city
     users_connection.commit()
     users_cursor.close()
 
+
 def delete_from_users(condition):
     users_cursor = users_connection.cursor()
-    query = f'DELETE FROM users WHERE {condition}'
+    query = f"DELETE FROM users WHERE {condition}"
     users_connection.execute(query)
     users_connection.commit()
     users_cursor.close()
-
-
-
-
-
-
 
 
 ##########################################
@@ -112,25 +108,29 @@ def delete_from_users(condition):
 # Token Database Initialization
 tokens_connection = sqlite3.connect("tokens.db", check_same_thread=False)
 tokens_cursor = tokens_connection.cursor()
-tokens_cursor.execute("""
+tokens_cursor.execute(
+    """
 CREATE TABLE IF NOT EXISTS tokens (
     token text PRIMARY KEY,
     expire_date int
 )
-""")
+"""
+)
 tokens_connection.commit()
 tokens_cursor.close()
+
 
 # Token DB Accesor Methods
 def select_from_tokens(attribs, condition):
     tokens_cursor = tokens_connection.cursor()
     if condition != None:
-        query = f'SELECT {attribs} FROM tokens WHERE {condition}'
+        query = f"SELECT {attribs} FROM tokens WHERE {condition}"
     else:
-        query = f'SELECT {attribs} FROM tokens'
+        query = f"SELECT {attribs} FROM tokens"
     query_results = tokens_connection.execute(query).fetchall()
     tokens_cursor.close()
     return query_results
+
 
 def insert_into_tokens(token, expire_date):
     tokens_cursor = tokens_connection.cursor()
@@ -139,23 +139,16 @@ def insert_into_tokens(token, expire_date):
     tokens_connection.commit()
     tokens_cursor.close()
 
+
 def delete_from_tokens(condition):
     tokens_cursor = tokens_connection.cursor()
     if condition != None:
-        query = f'DELETE FROM tokens WHERE {condition}'
+        query = f"DELETE FROM tokens WHERE {condition}"
     else:
-        query = 'DELETE FROM tokens'
+        query = "DELETE FROM tokens"
     tokens_connection.execute(query)
     tokens_connection.commit()
     tokens_cursor.close()
-
-
-
-
-
-
-
-
 
 
 ##########################################
@@ -163,13 +156,15 @@ def delete_from_tokens(condition):
 ##########################################
 cities_connection = sqlite3.connect("cities.db", check_same_thread=False)
 cities_cursor = cities_connection.cursor()
-cities_cursor.execute("""
+cities_cursor.execute(
+    """
 CREATE TABLE IF NOT EXISTS cities (
     cityID integer PRIMARY KEY,
     city text NOT NULL,
     state text NOT NULL
 )
-""")
+"""
+)
 cities_connection.commit()
 cities_cursor.close()
 
@@ -178,39 +173,43 @@ cities_cursor.close()
 def select_from_cities(attribs, condition):
     cities_cursor = cities_connection.cursor()
     if condition != None:
-        query = f'SELECT {attribs} FROM cities WHERE {condition}'
+        query = f"SELECT {attribs} FROM cities WHERE {condition}"
     else:
-        query = f'SELECT {attribs} FROM cities'
+        query = f"SELECT {attribs} FROM cities"
     query_results = cities_connection.execute(query).fetchall()
     cities_cursor.close()
     return query_results
 
+
 def insert_into_cities(city, state):
     cities_cursor = cities_connection.cursor()
-    query = f'INSERT INTO cities(cityID, city, state) VALUES (NULL, "{city}", "{state}")'
+    query = (
+        f'INSERT INTO cities(cityID, city, state) VALUES (NULL, "{city}", "{state}")'
+    )
     cities_connection.execute(query)
     cities_connection.commit()
     cities_cursor.close()
+
 
 def delete_from_cities(condition):
     cities_cursor = cities_connection.cursor()
     if condition != None:
-        query = f'DELETE FROM cities WHERE {condition}'
+        query = f"DELETE FROM cities WHERE {condition}"
     else:
-        query = 'DELETE FROM cities'
+        query = "DELETE FROM cities"
     cities_connection.execute(query)
     cities_connection.commit()
     cities_cursor.close()
 
+
 def initialize_client_selector():
-    return sorted([(result[0], ", ".join([name.title() for name in result[1:]])) for result in select_from_cities("*", None)], key= lambda x: x[1])
-
-
-
-
-
-
-
+    return sorted(
+        [
+            (result[0], ", ".join([name.title() for name in result[1:]]))
+            for result in select_from_cities("*", None)
+        ],
+        key=lambda x: x[1],
+    )
 
 
 ##########################################
@@ -218,7 +217,8 @@ def initialize_client_selector():
 ##########################################
 messages_connection = sqlite3.connect("messages.db", check_same_thread=False)
 messages_cursor = messages_connection.cursor()
-messages_cursor.execute("""
+messages_cursor.execute(
+    """
 CREATE TABLE IF NOT EXISTS messages (
     messageID integer PRIMARY KEY,
     content text,
@@ -228,7 +228,8 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY(author) REFERENCES users(username),
     FOREIGN KEY(cityID) REFERENCES cities(cityID)
 )
-""")
+"""
+)
 messages_connection.commit()
 messages_cursor.close()
 
@@ -237,30 +238,31 @@ messages_cursor.close()
 def select_from_messages(attribs, condition):
     messages_cursor = messages_connection.cursor()
     if condition != None:
-        query = f'SELECT {attribs} FROM messages WHERE {condition}'
+        query = f"SELECT {attribs} FROM messages WHERE {condition}"
     else:
-        query = f'SELECT {attribs} FROM messages'
+        query = f"SELECT {attribs} FROM messages"
     query_results = messages_connection.execute(query).fetchall()
     messages_cursor.close()
     return query_results
 
-def insert_into_messages(content, cityID, timestamp, author):
+
+def insert_into_messages(messageID, content, cityID, timestamp, author):
     messages_cursor = messages_connection.cursor()
-    query = f'INSERT INTO messages(messageID, content, cityID, timestamp, author) VALUES (NULL, "{content}", {cityID}, {timestamp}, "{author}")'
+    query = f'INSERT INTO messages(messageID, content, cityID, timestamp, author) VALUES ({messageID}, "{content}", {cityID}, {timestamp}, "{author}")'
     messages_connection.execute(query)
     messages_connection.commit()
     messages_cursor.close()
+
 
 def delete_from_messages(condition):
     messages_cursor = messages_connection.cursor()
     if condition != None:
-        query = f'DELETE FROM messages WHERE {condition}'
+        query = f"DELETE FROM messages WHERE {condition}"
     else:
-        query = 'DELETE FROM messages'
+        query = "DELETE FROM messages"
     messages_connection.execute(query)
     messages_connection.commit()
     messages_cursor.close()
-
 
 
 ##########################################
@@ -273,7 +275,8 @@ def delete_from_messages(condition):
 # But no client database is in place
 files_connection = sqlite3.connect("files.db", check_same_thread=False)
 files_cursor = files_connection.cursor()
-files_cursor.execute("""
+files_cursor.execute(
+    """
 CREATE TABLE IF NOT EXISTS files (
     fileHash text,
     filename text,
@@ -281,20 +284,23 @@ CREATE TABLE IF NOT EXISTS files (
     PRIMARY KEY(fileHash, cityID),
     FOREIGN KEY(cityID) REFERENCES cities(cityID)
 )
-""")
+"""
+)
 files_connection.commit()
 files_cursor.close()
+
 
 # file DB Accessor Methods
 def select_from_files(attribs, condition):
     files_cursor = files_connection.cursor()
     if condition != None:
-        query = f'SELECT {attribs} FROM files WHERE {condition}'
+        query = f"SELECT {attribs} FROM files WHERE {condition}"
     else:
-        query = f'SELECT {attribs} FROM files'
+        query = f"SELECT {attribs} FROM files"
     query_results = files_connection.execute(query).fetchall()
     files_cursor.close()
     return query_results
+
 
 def insert_into_files(fileHash, filename, cityID):
     files_cursor = files_connection.cursor()
@@ -303,43 +309,90 @@ def insert_into_files(fileHash, filename, cityID):
     files_connection.commit()
     files_cursor.close()
 
+
 def delete_from_files(condition):
     files_cursor = files_connection.cursor()
     if condition != None:
-        query = f'DELETE FROM files WHERE {condition}'
+        query = f"DELETE FROM files WHERE {condition}"
     else:
-        query = 'DELETE FROM files'
+        query = "DELETE FROM files"
     files_connection.execute(query)
     files_connection.commit()
     files_cursor.close()
 
 
+# cards database
+cards_connection = sqlite3.connect("cards.db", check_same_thread=False)
+cards_cursor = cards_connection.cursor()
+cards_cursor.execute(
+    """
+CREATE TABLE IF NOT EXISTS cards (
+    cardID int PRIMARY KEY,
+    content text,
+    columnID text,
+    cityID int,
+    FOREIGN KEY(cityID) REFERENCES cities(cityID)
+)
+"""
+)
+cards_connection.commit()
+cards_cursor.close()
 
 
+# card DB Accessor Methods
+def select_from_cards(attribs, condition):
+    cards_cursor = cards_connection.cursor()
+    if condition != None:
+        query = f"SELECT {attribs} FROM cards WHERE {condition}"
+    else:
+        query = f"SELECT {attribs} FROM cards"
+    query_results = cards_connection.execute(query).fetchall()
+    cards_cursor.close()
+    return query_results
 
 
+def insert_into_cards(cardID, content, columnID, cityID):
+    cards_cursor = cards_connection.cursor()
+    query = f'INSERT INTO cards(cardID, content, columnID, cityID) VALUES ({cardID}, "{content}", "{columnID}", {cityID})'
+    cards_connection.execute(query)
+    cards_connection.commit()
+    cards_cursor.close()
 
 
+def update_in_cards(updates, condition):
+    cards_cursor = cards_connection.cursor()
+    query = f"UPDATE cards SET {updates} WHERE {condition}"
+    cards_connection.execute(query)
+    cards_connection.commit()
+    cards_cursor.close()
 
 
+def delete_from_cards(condition):
+    cards_cursor = cards_connection.cursor()
+    if condition != None:
+        query = f"DELETE FROM cards WHERE {condition}"
+    else:
+        query = "DELETE FROM cards"
+    cards_connection.execute(query)
+    cards_connection.commit()
+    cards_cursor.close()
 
 
-# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗ 
-# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝ 
+# ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗
+# ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝
 # ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
 # ██╔═══╝ ██║   ██║██╔══██╗██║     ██║██║         ██╔══╝  ██╔══██║██║     ██║██║╚██╗██║██║   ██║
 # ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
-# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝     
-app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+# ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝
+app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
 # This allows you to see HTML/CSS changes when you reload the page when you're running and editing the app locally
-app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Upload files parameters
-UPLOAD_FOLDER_PATH = 'app/uploads/'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_PATH
+UPLOAD_FOLDER_PATH = "app/uploads/"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER_PATH
 # 10 MB file limit
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
-
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
 
 # Configure app to support user sessions
@@ -347,80 +400,109 @@ app.secret_key = os.urandom(32)
 CORS(app)
 
 
-@app.route('/', methods=["GET"])
+@app.route("/", methods=["GET"])
 def base_page():
-    return render_template('login.html')
+    return render_template("login.html")
 
-@app.route('/favicon.ico', methods=["GET"])
+
+@app.route("/favicon.ico", methods=["GET"])
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype = 'image/vnd.microsoft.icon')
+    return send_from_directory(
+        os.path.join(app.root_path, "static"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon",
+    )
 
-@app.route('/auth', methods=["POST"])
+
+@app.route("/auth", methods=["POST"])
 def auth():
-    password = request.get_json().get('password')
-    username = request.get_json().get('username')
+    password = request.get_json().get("password")
+    username = request.get_json().get("username")
 
-    query_results=select_from_users("user_type,cityID", f'username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"')
+
+    query_results=select_from_users("user_type,cityID,first_name,last_name", f'username = "{username}" AND password = "{hashlib.sha256(str.encode(str(password)+"Alittlebitofsaltandpepper.")).hexdigest()}"')
     if(len(query_results) > 0):
         timestamp = (datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()
         token = hashlib.sha256(str.encode(str(timestamp))).hexdigest()
         session["token"] = token
         insert_into_tokens(token, timestamp+SESSION_LENGTH)
+        session["first_name"] = query_results[0][2]
+        session["last_name"] = query_results[0][3]
         if(query_results[0][1] != None):
+
             session["cityID"] = query_results[0][1]
-        if(query_results[0][0] == "client"):
+        if query_results[0][0] == "city":
             session["type"] = "city"
-            return {'window': 'city'}, 200
+            return {"window": "city"}, 200
         else:
             session["type"] = "company"
-            return {'window': 'company'}, 200
+            return {"window": "company"}, 200
     else:
-        return {'window': 'failed_auth'}, 200
-    
+        return {"window": "failed_auth"}, 200
 
-@app.route('/upload', methods=["GET"])
+
+@app.route("/upload", methods=["GET"])
 def upload():
     form = ClientSelector()
     form.clients.choices = initialize_client_selector()
-    return render_template('upload.html', form=form)
+    return render_template("upload.html", form=form)
 
-@app.route('/uploader', methods=['POST'])
+
+@app.route("/uploader", methods=["POST"])
 def uploader():
-    
-    if request.method == 'POST' and token_valid() and "type" in session and session["type"] == "company":
-        f = request.files['file']
+    if (
+        request.method == "POST"
+        and token_valid()
+        and "type" in session
+        and session["type"] == "company"
+    ):
+        f = request.files["file"]
         try:
-            f.save(UPLOAD_FOLDER_PATH+secure_filename(f.filename))
-            with open(UPLOAD_FOLDER_PATH+secure_filename(f.filename), mode='rb') as saved:
-                insert_into_files(sha256(saved.read()).hexdigest(), secure_filename(f.filename), request.form.get('clients'))
+            f.save(UPLOAD_FOLDER_PATH + secure_filename(f.filename))
+            with open(
+                UPLOAD_FOLDER_PATH + secure_filename(f.filename), mode="rb"
+            ) as saved:
+                insert_into_files(
+                    sha256(saved.read()).hexdigest(),
+                    secure_filename(f.filename),
+                    request.form.get("clients"),
+                )
         except sqlite3.IntegrityError:
             print("File already uploaded.")
         except IsADirectoryError:
             print("No file provided.")
     else:
         return redirect("/")
-        
-        
-    return redirect(url_for(".company", client=request.form.get('clients')))
 
-@app.route('/download/<hash>')
+    return redirect(url_for(".company", client=request.form.get("clients")))
+
+
+@app.route("/download/<hash>")
 def download(hash):
     if token_valid() and "type" in session and session["type"] == "company":
         file = select_from_files("*", f"fileHash = '{hash}'")[0]
-        return send_file(UPLOAD_FOLDER_PATH+file[1], 
-                     download_name=file[1], as_attachment=True)
+        return send_file(
+            UPLOAD_FOLDER_PATH + file[1], download_name=file[1], as_attachment=True
+        )
     else:
         return redirect("/")
-    
-@app.route('/deleter/<hash>/<cityID>')
+
+
+@app.route("/deleter/<hash>/<cityID>")
 def delete(hash, cityID):
     if token_valid() and "type" in session and session["type"] == "company":
-        os.remove(UPLOAD_FOLDER_PATH+select_from_files("filename", f"fileHash = '{hash}' AND cityID = '{cityID}'")[0][0])
+        os.remove(
+            UPLOAD_FOLDER_PATH
+            + select_from_files(
+                "filename", f"fileHash = '{hash}' AND cityID = '{cityID}'"
+            )[0][0]
+        )
         delete_from_files(f"fileHash = '{hash}' AND cityID = '{cityID}'")
         # print("File deleted.")
         return redirect(url_for(".company", client=cityID))
     else:
         return redirect("/")
+
 
 @app.route("/logout", methods=["GET"])
 def logout():
@@ -428,19 +510,21 @@ def logout():
     session.clear()
     return redirect("/")
 
-@app.route('/city', methods=["GET"])
+
+@app.route("/city", methods=["GET"])
 def city():
     if token_valid() and "type" in session and session["type"] == "city":
-        return render_template('city/home.html')
+        return render_template('city/home.html', customer_name=select_from_cities("city", f'cityID={session["cityID"]}')[0][0].title(), first_name=session["first_name"], last_name=session["last_name"])
     else:
         return redirect("/")
 
-@app.route('/company', methods=["GET", "POST"])
+
+@app.route("/company", methods=["GET", "POST"])
 def company(client=1):
     form = ClientSelector()
     form.clients.choices = initialize_client_selector()
     if request.method == "POST":
-        form.clients.default = request.form.get('clients')
+        form.clients.default = request.form.get("clients")
     elif "client" in request.args:
         form.clients.default = request.args["client"]
     else:
@@ -454,14 +538,86 @@ def company(client=1):
     else:
         return redirect("/")
 
-@app.route('/failed_auth', methods=["GET"])
+
+@app.route("/failed_auth", methods=["GET"])
 def failed_auth():
-    return render_template('error/failed_auth.html')
+    return render_template("error/failed_auth.html")
 
 
+#############################
+#  Progress Board Endpoints
+#############################
+@app.route("/get_cards", methods=["POST"])
+def get_cards():
+    query_results = select_from_cards("*", f'cityID={session["cityID"]}')
+    cards = []
+    for i in query_results:
+        json_object = {"id": i[0], "content": i[1], "column": i[2]}
+        cards.append(json_object)
+    # print(cards)
+    return {"cards": cards}, 200
+
+
+@app.route("/add_card", methods=["POST"])
+def add_card():
+    cardID = request.get_json().get("id")
+    content = request.get_json().get("text")
+    columnID = request.get_json().get("column")
+    insert_into_cards(cardID, content, columnID, session["cityID"])
+    return make_response("", 200)
+
+
+@app.route("/update_card", methods=["POST"])
+def update_card():
+    # Send this endpoint a card with the same ID, but updated content, and it will replace it.
+    cardID = request.get_json().get("id")
+    content = request.get_json().get("text")
+    columnID = request.get_json().get("column")
+    update_in_cards(f'content="{content}",columnID="{columnID}"', f"cardID={cardID}")
+    return make_response("", 200)
+
+
+@app.route("/delete_card", methods=["POST"])
+def delete_card():
+    cardID = request.get_json().get("id")
+    content = request.get_json().get("text")
+    columnID = request.get_json().get("column")
+    delete_from_cards(f"cardID={cardID}")
+    return make_response("", 200)
+
+
+
+#############################
+#  Messaging Endpoints
+#############################    
+@app.route('/add_message', methods=["POST"])
+def add_message():
+    messageID = request.get_json().get('id')
+    content = request.get_json().get('content')
+    author = request.get_json().get('author')
+    timestamp = request.get_json().get('timestamp')
+    insert_into_messages(messageID, content, session["cityID"], timestamp, author)
+    return make_response('',200)
+
+@app.route('/get_messages', methods=["POST"])
+def get_messages():
+    query_results = select_from_messages("*", f'cityID={session["cityID"]}')
+    print(query_results)
+    messages = []
+    for i in query_results:
+        json_object = {'id': i[0],'content': i[1],'author': i[4], 'timestamp': i[3]}
+        messages.append(json_object)
+    return {'messages': messages}, 200
+
+#############################
+#  Token Validator
+#############################
 def token_valid():
-    query_results = select_from_tokens("token", f'token="{session["token"]}"')
-    return True if len(query_results) > 0 else False
+    try:
+        query_results = select_from_tokens("token", f'token="{session["token"]}"')
+        return True if len(query_results) > 0 else False
+    except:
+        return False
 
 
 #  █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗
@@ -469,63 +625,89 @@ def token_valid():
 # ███████║██║  ██║██╔████╔██║██║██╔██╗ ██║
 # ██╔══██║██║  ██║██║╚██╔╝██║██║██║╚██╗██║
 # ██║  ██║██████╔╝██║ ╚═╝ ██║██║██║ ╚████║
-# ╚═╝  ╚═╝╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝   
+# ╚═╝  ╚═╝╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝
 
-appAdmin = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+appAdmin = Flask(__name__, template_folder="app/templates", static_folder="app/static")
 
-@appAdmin.route('/', methods=["GET"])
+
+@appAdmin.route("/", methods=["GET"])
 def admin_page():
     """
     Fetchs all users and just displays them on the admin page"""
     user_data = select_from_users("*", None)
     city_data = select_from_cities("*", None)
-    users = [{'id': user[0], 'first_name': user[1], 'last_name': user[2], 'user_type': user[3], 'username': user[4], 'cityID': user[6]} for user in user_data]
-    cities = [{'cityID': city[0], 'city': city[1], 'state': city[2]} for city in city_data]
-    return render_template('admin/dashboard.html', users=users, cities=cities)
+    users = [
+        {
+            "id": user[0],
+            "first_name": user[1],
+            "last_name": user[2],
+            "user_type": user[3],
+            "username": user[4],
+            "cityID": user[6],
+        }
+        for user in user_data
+    ]
+    cities = [
+        {"cityID": city[0], "city": city[1], "state": city[2]} for city in city_data
+    ]
+    return render_template("admin/dashboard.html", users=users, cities=cities)
 
-@appAdmin.route('/create_user', methods=["GET", "POST"])
+
+@appAdmin.route("/create_user", methods=["GET", "POST"])
 def create_user():
-    if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        user_type = request.form['user_type']
-        username = request.form['username']
-        password = request.form['password']
-        city = request.form['city'].lower()
-        state = request.form['state'].lower()
-        query_results = select_from_cities("cityID", f'city="{city}" AND state="{state}"')
-        if(len(query_results) == 0):
+    if request.method == "POST":
+        first_name = request.form["first_name"]
+        last_name = request.form["last_name"]
+        user_type = request.form["user_type"]
+        username = request.form["username"]
+        password = request.form["password"]
+        city = request.form["city"].lower()
+        state = request.form["state"].lower()
+        query_results = select_from_cities(
+            "cityID", f'city="{city}" AND state="{state}"'
+        )
+        if len(query_results) == 0:
             print("city does not exist, creating")
-            insert_into_cities(city,state)
-            query_results = select_from_cities("cityID", f'city="{city}" AND state="{state}"')
-        insert_into_users(first_name, last_name, user_type, username, password, query_results[0][0])
+            insert_into_cities(city, state)
+            query_results = select_from_cities(
+                "cityID", f'city="{city}" AND state="{state}"'
+            )
+        insert_into_users(
+            first_name, last_name, user_type, username, password, query_results[0][0]
+        )
         return redirect(url_for("admin_page"))
-    return render_template('admin/create_user.html')
+    return render_template("admin/create_user.html")
 
 
-# ██╗    ██╗███████╗██████╗     ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ 
+# ██╗    ██╗███████╗██████╗     ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗
 # ██║    ██║██╔════╝██╔══██╗    ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗
-# ██║ █╗ ██║█████╗  ██████╔╝    ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝   
-# ██║███╗██║██╔══╝  ██╔══██╗    ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗  
+# ██║ █╗ ██║█████╗  ██████╔╝    ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝
+# ██║███╗██║██╔══╝  ██╔══██╗    ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗
 # ╚███╔███╔╝███████╗██████╔╝    ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║
-#  ╚══╝╚══╝ ╚══════╝╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ 
+#  ╚══╝╚══╝ ╚══════╝╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝
+
 
 def run_public_page():
     app.run(debug=False, port=5000)
-    
+
+
 def run_admin_page():
     appAdmin.run(debug=False, port=8123)
+
 
 def token_watchdog():
     while True:
         # print("Token Cleanup")
-        delete_from_tokens(f'expire_date<{(datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()}')
+        delete_from_tokens(
+            f"expire_date<{(datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()}"
+        )
         time.sleep(60)
 
 
 # https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python#1112350
 def signal_handler(sig, frame):
     sys.exit(0)
+
 
 if __name__ == "__main__":
     delete_from_tokens(None)
