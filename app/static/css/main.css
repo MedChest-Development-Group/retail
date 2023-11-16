@@ -220,8 +220,8 @@ input#first_name,
 input#last_name, 
 input#city, 
 input#state,
-input#username-admin,
-input#password-admin {
+input#username,
+input#password {
     width: 200%;
     padding: 12px 20px;
     margin: 8px 0;

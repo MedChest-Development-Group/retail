@@ -1,40 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="creauteUser-container">
-        <div class="createUser-form">
-            <h1>Create User</h1>
-            <form method="POST">
-                <label for="first_name">First Name:</label>
-                <input type="text" id="first_name" name="first_name" required>
-                
-                <label for="last_name">Last Name:</label>
-                <input type="text" id="last_name" name="last_name" required>
-                
-                <label for="user_type">User Type:</label>
-                <select id="user_type" name="user_type">
-                    <option value="City">City</option>
-                    <option value="RS employee">RS Employee</option>
-                    <option value="Admin">Admin</option>
-                </select>
+<div class="creauteUser-container">
+    <div class="createUser-form">
+        <h1>Create User</h1>
+        <form method="POST">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
 
-                <label for="city">City:</label>
-                <input type="text" id="city" name="city" required>
-            
-                <label for="state">State:</label>
-                <input type="text" id="state" name="state" required>
-            
-                
-                <label for="username-admin">Username:</label>
-                <input type="text" id="username-admin" name="username-admin" required>
-                
-                <label for="password-admin">Password:</label>
-                <input type="password" id="password-admin" name="password-admin" required>
-                <br>
-                <input id="createUserButton" type="submit" value="Create User">
-            </form>
-        </div>
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+
+            <label for="user_type">User Type:</label>
+            <select id="user_type" name="user_type">
+                <option value="city">City</option>
+                <option value="RS employee">RS Employee</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required>
+
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <input id="createUserButton" type="submit" value="Create User">
+        </form>
     </div>
+</div>
 
 <script>
     document.getElementById('createUserButton').addEventListener('click', function() {
