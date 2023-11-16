@@ -198,7 +198,11 @@ button#loginButton:hover {
     /* max-width: max-content; */
 }
 
-/* admin table stuff */
+/* admin stuff */
+.admin-title {
+    text-align: center;
+}
+
 .users-list {
     width: 80%;
     margin: auto;
