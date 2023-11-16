@@ -12,8 +12,17 @@ html {
 }
 
 .title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     text-align: center;
     padding: 1em;
+}
+
+.logout-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .content-container {
@@ -27,12 +36,19 @@ html {
 }
 
 .section-container {
-    background-color: grey;
+    color: #f6f5f6;
+    background-color: #363948;
     margin-left: 1em;
     margin-right: 1em;
     padding-left: 1em;
     padding-right: 1em;
+    border-radius: 8px;
     height: 100%;
+}
+
+.underlined-heading {
+    border-bottom: 2px solid #78be20;
+    padding: 5px;
 }
 
 .board {
@@ -44,7 +60,7 @@ html {
 
 .column {
     flex: 1;
-    background-color: #afafaf;
+    background-color: #525562;
     border-radius: 8px;
     padding: 8px;
     margin: 5px;
@@ -60,7 +76,8 @@ html {
 }
 
 .task {
-    background-color: #ffffff; /* White background color */
+    color: #363948;
+    background-color: #f6f5f6; /* White background color */
     border: 1px solid #ddd; /* Border color (adjust as needed) */
     border-radius: 8px; /* Rounded corners, adjust the value for desired roundness */
     padding: 10px; /* Adjust padding as needed */
@@ -77,11 +94,64 @@ html {
     position: sticky;
     top: -3%;
     padding: 2px;
-    background-color: #afafaf;
+    background-color: #525562;
     z-index: 1;
 }
 
 .button-with-padding {
     padding: 5px; /* Adjust the value according to your preference */
     margin: 2px;
+}
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Style for the message form */
+.message-form {
+    display: flex;
+    flex-direction: column;
+    padding: 10px; /* Adjust padding as needed */
+}
+
+/* Style for the message textarea */
+.message-form textarea {
+    margin-bottom: 10px; /* Add space between textarea and submit button */
+    color: #363948;
+}
+
+/* Style for the submit button */
+.message-form button {
+    background-color: #78be20; /* Green background color */
+    color: white; /* White text color */
+    border: none; /* Remove border */
+    border-radius: 5px;
+    padding: 10px 15px; /* Add padding */
+    cursor: pointer; /* Add cursor pointer on hover */
+}
+
+/* Style for the submit button on hover */
+.message-form button:hover {
+    background-color: #5e9619; /* Darker green on hover */
+}
+
+.message {
+    background-color: #f6f5f6;
+    border-radius: 5px;
+    color: #363948;
+    padding: 3px;
+    margin: 3px;
+}
+
+.message-context {
+    font-size: smaller;
+    padding-left: 1%;
+    border-top: 2px solid #78be20;
+}
+
+.messaging-section {
+    max-height: 55%;
+    overflow-y: auto;
 }
