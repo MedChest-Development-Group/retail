@@ -1,10 +1,10 @@
 <!-- Quick testing version here - Michael -->
 {% extends "base.html" %}
 {% block content %}
-    <h1>Admin Dashboard</h1>
-    <h2>Create users</h2>
-    <button onclick="location.href='/create_user'">Add New User</button>
-    <h2>User List</h2>
+    <h1 class="admin-title center">Admin Dashboard</h1>
+    <h2 class="admin-sub center">Create users</h2>
+    <button onclick="location.href='/create_user'" id="createNewUserButton">Add New User</button>
+    <h2 class="admin-sub center">User List</h2>
     <div class="users-list">
         <table border="1">
             <thead>
@@ -32,7 +32,8 @@
             </tbody>
         </table>
     </div>
-    <h2>City List</h2>
+    <br>
+    <h2 class="admin-sub center">City List</h2>
     <div class="users-list">
         <table border="1">
             <thead>
@@ -53,4 +54,5 @@
             </tbody>
         </table>
     </div>
+</div>
 {% endblock %}
