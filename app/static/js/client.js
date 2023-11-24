@@ -80,6 +80,7 @@ function updateTask(taskElement) {
         taskElement.textContent = newContent;
         updateCard(taskElement);
     }
+    location.reload();
 }
 
 function updateCard(taskElement){
