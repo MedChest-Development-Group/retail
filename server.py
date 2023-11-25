@@ -532,9 +532,7 @@ def logout():
 def city():
     if token_valid() and "type" in session and session["type"] == "city":
         files = sorted(select_from_files("*", f"cityID = {session['cityID']}"))
-        print(f"Files: {files}")
         marketingMaterial = [file for file in files if int(file[3]) == 1]
-        print(f"MM: {marketingMaterial}")
         return render_template('city/home.html', customer_name=select_from_cities("city", f'cityID={session["cityID"]}')[0][0].title(), first_name=session["first_name"], last_name=session["last_name"],files=files, marketingMaterial= marketingMaterial)
     else:
         return redirect("/")
