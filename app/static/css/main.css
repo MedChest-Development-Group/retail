@@ -259,7 +259,12 @@ html {
 }
 
 
-.client-selector, #uploadBox, #uploadSubmit {
+.client-selector{
+    background-color:#363948;
+    width: 100%;
+}
+
+#uploadBox, #uploadSubmit {
     background-color:#363948
 }
 
@@ -267,10 +272,33 @@ html {
     color:rgb(255, 255, 255);
 }
 
+.files-list-large{
+    padding: 2%;
+    height: 69%;
+    /* height: 185px; */
+    width: 100%;
+    overflow-y: scroll;
+    border:1px solid #78be20;
+    
+}
+/* issue when window is half width */
+/* due to the heading overflowing vertically */
+.files-list-long{
+    padding: 2%;
+    /* max */
+    /* height: 385px; */
+    height:82%;
+
+    width: 100%;
+    overflow-y: scroll;
+    border:1px solid #78be20;
+    
+}
+
 .files-list{
     padding: 2%;
     max-height: 100px;
-    width: 30%;
+    width: 100%;
     overflow-y: scroll;
     border:1px solid #78be20;
     
