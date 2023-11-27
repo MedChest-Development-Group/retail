@@ -395,7 +395,9 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 UPLOAD_FOLDER_PATH = "app/uploads/"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER_PATH
 # 10 MB file limit
-app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
+
+app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024
+
 
 
 # Configure app to support user sessions
@@ -461,15 +463,11 @@ def uploader():
     ):
         f = request.files["file"]
         try:
-            f.save(UPLOAD_FOLDER_PATH + secure_filename(f.filename))
-            with open(
-                UPLOAD_FOLDER_PATH + secure_filename(f.filename), mode="rb"
-            ) as saved:
-                insert_into_files(
-                    sha256(saved.read()).hexdigest(),
-                    secure_filename(f.filename),
-                    request.form.get("clients"),
-                )
+            if not os.path.exists(UPLOAD_FOLDER_PATH):
+                os.makedirs(UPLOAD_FOLDER_PATH)
+            f.save(UPLOAD_FOLDER_PATH+secure_filename(f.filename))
+            with open(UPLOAD_FOLDER_PATH+secure_filename(f.filename), mode='rb') as saved:
+                insert_into_files(sha256(saved.read()).hexdigest(), secure_filename(f.filename), request.form.get('clients'))
         except sqlite3.IntegrityError:
             print("File already uploaded.")
         except IsADirectoryError:

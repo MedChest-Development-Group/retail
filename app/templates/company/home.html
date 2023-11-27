@@ -15,7 +15,7 @@
         <div class="section-container" style="width:25%;">
             <form id="client-selection" action='/company' method="post">
                 <h2 class="underlined-heading" for="clients">Client</h2>
-                <div>{{ render_field(form.clients, onchange='this.form.submit()', style="max-width:100%")}}</div>
+                <div>{{ render_field(form.clients, onchange='this.form.submit()', style="max-width:100%", class="client-selector")}}</div>
             </form>
         </div>
 
