@@ -281,6 +281,7 @@ CREATE TABLE IF NOT EXISTS files (
     fileHash text,
     filename text,
     cityID INTEGER,
+    marketingMaterial bool,
     PRIMARY KEY(fileHash, cityID),
     FOREIGN KEY(cityID) REFERENCES cities(cityID)
 )
@@ -304,10 +305,20 @@ def select_from_files(attribs, condition):
 
 def insert_into_files(fileHash, filename, cityID):
     files_cursor = files_connection.cursor()
-    query = f'INSERT INTO files(fileHash, filename, cityID) VALUES ("{fileHash}", "{filename}", {cityID})'
+    query = f'INSERT INTO files(fileHash, filename, cityID, marketingMaterial) VALUES ("{fileHash}", "{filename}", {cityID}, false)'
     files_connection.execute(query)
     files_connection.commit()
     files_cursor.close()
+
+
+
+def update_files(updates, conditions):
+    files_cursor = files_connection.cursor()
+    query = f"UPDATE files SET {updates} WHERE {conditions}"
+    files_connection.execute(query)
+    files_connection.commit()
+    files_cursor.close()
+
 
 
 def delete_from_files(condition):
@@ -485,16 +496,24 @@ def download(hash):
     else:
         return redirect("/")
 
+@app.route("/marketingupdate/<hash>/<cityID>/<status>")
+def marketingUpdate(hash, cityID, status):
+    if token_valid() and "type" in session and session["type"] == "company":
+        update_files(f"marketingMaterial = '{1 if int(status) == 0 else 0}'", f"fileHash = '{hash}' AND cityID = '{cityID}'")
+        return redirect(url_for(".company", client=cityID))
+    else:
+        return redirect("/")
 
 @app.route("/deleter/<hash>/<cityID>")
 def delete(hash, cityID):
     if token_valid() and "type" in session and session["type"] == "company":
-        os.remove(
-            UPLOAD_FOLDER_PATH
-            + select_from_files(
-                "filename", f"fileHash = '{hash}' AND cityID = '{cityID}'"
-            )[0][0]
-        )
+        if (len(select_from_files("*",f"fileHash = '{hash}'")) <= 1):
+            os.remove(
+                UPLOAD_FOLDER_PATH
+                + select_from_files(
+                    "filename", f"fileHash = '{hash}' AND cityID = '{cityID}'"
+                )[0][0]
+            )
         delete_from_files(f"fileHash = '{hash}' AND cityID = '{cityID}'")
         # print("File deleted.")
         return redirect(url_for(".company", client=cityID))
@@ -512,7 +531,9 @@ def logout():
 @app.route("/city", methods=["GET"])
 def city():
     if token_valid() and "type" in session and session["type"] == "city":
-        return render_template('city/home.html', customer_name=select_from_cities("city", f'cityID={session["cityID"]}')[0][0].title(), first_name=session["first_name"], last_name=session["last_name"])
+        files = sorted(select_from_files("*", f"cityID = {session['cityID']}"))
+        marketingMaterial = [file for file in files if int(file[3]) == 1]
+        return render_template('city/home.html', customer_name=select_from_cities("city", f'cityID={session["cityID"]}')[0][0].title(), first_name=session["first_name"], last_name=session["last_name"],files=files, marketingMaterial= marketingMaterial)
     else:
         return redirect("/")
 
@@ -529,10 +550,10 @@ def company(client=1):
         form.clients.default = client
 
     form.process()
-    files = select_from_files("*", f"cityID = {form.clients.default}")
+    files = sorted(select_from_files("*", f"cityID = {form.clients.default}"))
 
     if token_valid() and "type" in session and session["type"] == "company":
-        return render_template('company/home.html', form=form, files=sorted(files))
+        return render_template('company/home.html', form=form, files=files)
     else:
         return redirect("/")
 
