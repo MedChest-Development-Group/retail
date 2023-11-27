@@ -24,6 +24,15 @@
             <div class="section-container" style="width: 50%;">
                 <!-- Imported data -->
                 <h2 class="underlined-heading">Data Imported</h2>
+                <div class="files-list-large">
+                    {% for file in files %}
+                    <h5>
+                        <a class="listed-file" id="{{file[0]}}" href="http://127.0.0.1:5000/download/{{file[0]}}">
+                            {{file[1]}}        
+                        </a>
+                    </h5>
+                    {% endfor %}
+                </div>
             </div>
             <div class="section-container" style="width: 50%;">
                 <!-- Data tutorials -->
@@ -59,6 +68,15 @@
             <div class="section-container" style="width: 30%;">
                 <!-- PDF stuff, marketing material -->
                 <h2 class="underlined-heading">Marketing Material</h2>
+                <div class="files-list-long">
+                    {% for file in marketingMaterial %}
+                    <h5>
+                        <a class="listed-file" id="{{file[0]}}" href="http://127.0.0.1:5000/download/{{file[0]}}">
+                            {{file[1]}}        
+                        </a>
+                    </h5>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         <div class="horizontal-container" style="height: 50%;">

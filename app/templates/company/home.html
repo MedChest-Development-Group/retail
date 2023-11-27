@@ -1,66 +1,75 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import render_field %}
 {% block content %}
-    <div class="title-container">
-        <i></i>
-        <h1>Retail Strategies's Homepage</h1>
-        <div class="logout-container">
-            <form action="{{ url_for('logout') }}">
-                <button type="submit" class="btn btn-danger center">Logout</button>
-            </form>
-        </div>
+<div class="title-container">
+    <i></i>
+    <h1>Retail Strategies's Homepage</h1>
+    <div class="logout-container">
+        <form action="{{ url_for('logout') }}">
+            <button type="submit" class="btn btn-danger center">Logout</button>
+        </form>
     </div>
-    <!-- Container to select client -->
-    <div class="horizontal-container">
-        <div class="section-container" style="width:25%;">
-            <form id="client-selection" action='/company' method="post">
-                <h2 class="underlined-heading" for="clients">Client</h2>
-                <div>{{ render_field(form.clients, onchange='this.form.submit()', style="max-width:100%", class="client-selector")}}</div>
+</div>
+<!-- Container to select client -->
+<div class="horizontal-container">
+    <div class="section-container" style="width:25%;">
+        <form id="client-selection" action='/company' method="post">
+            <h2 class="underlined-heading" for="clients">Client</h2>
+            <div>{{ render_field(form.clients, onchange='this.form.submit()', style="max-width:100%", class="client-selector")}}</div>
+        </form>
+    </div>
+    
+    <div class="section-container" id="files" style="width:75%">
+        <h2 class="underlined-heading">Files</h2>
+        <div class="horizontal-container">
+            <form action = "http://127.0.0.1:5000/uploader" method = "POST" enctype = "multipart/form-data" onsubmit="if (document.getElementById('uploadBox').files.length > 0) alert('File Uploaded')">
+                <input type = "file" name = "file" id="uploadBox"/>
+                {{ render_field(form.clients, style='display:none')}}
+                <input id="uploadSubmit" type = "submit" value="Upload"/>
             </form>
-        </div>
-
-        <div class="section-container" id="files" style="width:75%">
-            <h2 class="underlined-heading">Files</h2>
-            <div class="horizontal-container">
-                <form action = "http://127.0.0.1:5000/uploader" method = "POST" enctype = "multipart/form-data" onsubmit="if (document.getElementById('uploadBox').files.length > 0) alert('File Uploaded')">
-                    <input type = "file" name = "file" id="uploadBox"/>
-                    {{ render_field(form.clients, style='display:none')}}
-                    <input id="uploadSubmit" type = "submit" value="Upload"/>
-                </form>
-                <div class="files-list">
-                    {% for file in files %}
-                    <h5>
-                        <a class="listed-file" id="{{file[0]}}" href="http://127.0.0.1:5000/download/{{file[0]}}">
-                            {{file[1]}}        
+            <div class="files-list">
+                {% for file in files %}
+                <h5>
+                    <a class="listed-file" id="{{file[0]}}" href="http://127.0.0.1:5000/download/{{file[0]}}">
+                        {{file[1]}}        
+                    </a>
+                    
+                    <input class="delete" type="button" onclick="location.href='http://127.0.0.1:5000/deleter/{{file[0]}}/{{file[2]}}';alert('File Deleted')" value="X" />
+                    {% if file[3] == 0 %}
+                        <a href='http://127.0.0.1:5000/marketingupdate/{{file[0]}}/{{file[2]}}/{{file[3]}}'>
+                            <img class="marketing-status" src="static/imgs/star_white.png" onclick="this.src='static/imgs/star_yellow.png';alert('File selected as marketing material.');" style="max-width:15px;float:right;" />
+                        </a>  
+                    {% else %}
+                        <a href='http://127.0.0.1:5000/marketingupdate/{{file[0]}}/{{file[2]}}/{{file[3]}}'>
+                            <img class="marketing-status" src="static/imgs/star_yellow.png" onclick="this.src='static/imgs/star_white.png';alert('File unselected as marketing material.')" style="max-width:15px;float:right;" />
                         </a>
-                        <input class="delete" type="button" onclick="location.href='http://127.0.0.1:5000/deleter/{{file[0]}}/{{file[2]}}';alert('File Deleted')" value="X" />
-                    </h5>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Container for Details -->
-    <div>
-        <div class="horizontal-container">
-            <!-- <div class="client-placeholder-horizontal-container"> -->
-                <div class="section-container" style="width: 50%; min-height: 600px;">
-                    <h2 class="underlined-heading">Graph here</h2>
-                </div>
-                <div class="section-container" style="width: 50%; min-height: 600px;">
-                    <h2 class="underlined-heading">Test</h2>
-                </div>
-            <!-- </div> -->
-        </div>
-        <div class="horizontal-container">
-            <div class="section-container" style="width: 50%; min-height: 600px;">
-                <h2 class="underlined-heading">Graph here</h2>
-            </div>
-            <div class="section-container" style="width: 50%; min-height: 600px;">
-                <h2 class="underlined-heading">Test</h2>
+                    {% endif %}
+                </h5>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
+    
+    <!-- Container for Details -->
+<div>
+    <div class="horizontal-container">
+    <!-- <div class="client-placeholder-horizontal-container"> -->
+        <div class="section-container" style="width: 50%; min-height: 600px;">
+            <h2 class="underlined-heading">Graph here</h2>
+        </div>
+        <div class="section-container" style="width: 50%; min-height: 600px;">
+            <h2 class="underlined-heading">Test</h2>
+        </div>
+        <!-- </div> -->
+    </div>
+    <div class="horizontal-container">
+        <div class="section-container" style="width: 50%; min-height: 600px;">
+            <h2 class="underlined-heading">Graph here</h2>
+        </div>
+        <div class="section-container" style="width: 50%; min-height: 600px;">
+            <h2 class="underlined-heading">Test</h2>
+        </div>
+    </div>
+</div>
+    {% endblock %}
