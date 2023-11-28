@@ -4,6 +4,13 @@
 
 const tasks = [];
 
+
+
+/**
+ * Create a task element based on task data.
+ * @param {Object} task - Task object with properties: id, text, column.
+ * @returns {HTMLDivElement} - Created task element.
+ */
 function createTaskElement(task) {
     const taskElement = document.createElement('div');
     taskElement.className = 'task';
@@ -38,10 +45,22 @@ function createTaskElement(task) {
     return taskElement;
 }
 
+
+
+/**
+ * Handle the dragstart event for a task element.
+ * @param {Event} event - Drag start event.
+ */
 function dragStart(event) {
     event.dataTransfer.setData('text/plain', event.target.dataset.taskId);
 }
 
+
+
+/**
+ * Handle the drop event for a task element.
+ * @param {Event} event - Drop event.
+ */
 function drop(event) {
     event.preventDefault();
     const taskId = event.dataTransfer.getData('text/plain');
@@ -52,6 +71,12 @@ function drop(event) {
     dropZone.appendChild(taskElement);
 }
 
+
+
+/**
+ * Delete a task and send a request to the server to delete the corresponding card.
+ * @param {HTMLDivElement} taskElement - Task element to be deleted.
+ */
 function deleteTask(taskElement) {
     fetch("http://127.0.0.1:5000/delete_card", {
         method: 'POST',
@@ -74,6 +99,13 @@ function deleteTask(taskElement) {
     taskElement.remove();
 }
 
+
+
+
+/**
+ * Update the content of a task by taking user input and send a request to the server to update the corresponding card.
+ * @param {HTMLDivElement} taskElement - Task element to be updated.
+ */
 function updateTask(taskElement) {
     const newContent = prompt('Enter the Retailer:');
     if(newContent){
@@ -102,6 +134,12 @@ function updateTask(taskElement) {
     }
 }
 
+
+
+/**
+ * Update the corresponding card on the server when a task is updated.
+ * @param {HTMLDivElement} taskElement - Task element to be updated.
+ */
 function updateCard(taskElement){
     fetch("http://127.0.0.1:5000/update_card", {
         method: 'POST',
@@ -123,10 +161,19 @@ function updateCard(taskElement){
     });
 }
 
+
+/**
+ * Handle the dragover event for a column.
+ * @param {Event} event - Drag over event.
+ */
 function dragOver(event) {
     event.preventDefault();
 }
 
+
+
+
+// Event listener for adding a new task
 $('.column-header button').on('click', function() {
     const columnId = $(this).closest('.column').attr('id');
     const newId = getNewId();
@@ -157,6 +204,12 @@ $('.column-header button').on('click', function() {
     }
 });
 
+
+
+/**
+ * Get a new task ID by finding the maximum existing ID and adding 1.
+ * @returns {number} - New task ID.
+ */
 function getNewId(){
     var max = 0;
     for (var i = 0; i < tasks.length; i++) {
@@ -167,6 +220,12 @@ function getNewId(){
     return max+1;
 }
 
+
+
+
+/**
+ * Fetch tasks from the server and update the task list.
+ */
 function fetchCards(){
     fetch("http://127.0.0.1:5000/get_cards", {
         method: 'POST',
@@ -195,6 +254,8 @@ tasks.forEach(task => {
     document.getElementById(taskElement.dataset.taskColumn).appendChild(taskElement);
 });
 
+
+// Add event listeners for drag-and-drop functionality
 const columns = document.querySelectorAll('.column');
 columns.forEach(column => {
     column.addEventListener('dragover', dragOver);
@@ -216,6 +277,13 @@ columns.forEach(column => {
 /////////////////////////
 const messages = [];
 
+
+
+/**
+ * Create a message element based on message data.
+ * @param {Object} message - Message object with properties: id, content, author, timestamp.
+ * @returns {HTMLDivElement} - Created message element.
+ */
 function createMessageElement(message) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message';
@@ -254,6 +322,13 @@ function createMessageElement(message) {
     return messageElement;
 }
 
+
+
+
+/**
+ * Get a new unique message ID by finding the maximum ID in the existing messages and incrementing it.
+ * @returns {number} - New unique message ID.
+ */
 function getNewMessageId(){
     var max = 0;
     for (var i = 0; i < messages.length; i++) {
@@ -264,6 +339,11 @@ function getNewMessageId(){
     return max+1;
 }
 
+
+/**
+ * Fetches messages from the server, processes the response data, and appends message elements to the messaging section.
+ * @returns {void}
+ */
 function fetchMessages(){
     fetch("http://127.0.0.1:5000/get_messages", {
         method: 'POST',
@@ -287,6 +367,14 @@ function fetchMessages(){
     });
 }
 
+
+
+/**
+ * Event handler for the click event on buttons inside elements with the class 'message-form'.
+ * Prevents the default behavior of the event, retrieves the message content, and sends a request to add the message.
+ * @param {Event} event - The click event object.
+ * @returns {void}
+ */
 $('.message-form button').on('click', function(event) {
     event.preventDefault();
     console.log('here')

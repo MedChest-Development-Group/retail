@@ -4,6 +4,13 @@
 
 const tasks = [];
 
+
+
+/**
+ * Create a task element based on task data.
+ * @param {Object} task - Task object with properties: id, text, column.
+ * @returns {HTMLDivElement} - Created task element.
+ */
 function createTaskElement(task) {
     const taskElement = document.createElement('div');
     taskElement.className = 'task';
@@ -16,6 +23,11 @@ function createTaskElement(task) {
 }
 
 
+
+
+/**
+ * Fetch cards from the server and update the task list.
+ */
 function fetchCards(){
     fetch("http://127.0.0.1:5000/get_cards", {
         method: 'POST',
@@ -44,6 +56,12 @@ function fetchCards(){
     });
 }
 
+
+
+/**
+ * Update the card count display for a specific column.
+ * @param {string} columnId - ID of the column to update.
+ */
 function updateCardCount(columnId) {
     const column = document.getElementById(columnId);
     const cardCount = column.querySelectorAll('.task').length;
@@ -54,6 +72,7 @@ function updateCardCount(columnId) {
     }
 }
 
+// Iterate through existing tasks and update the task list
 tasks.forEach(task => {
     const taskElement = createTaskElement(task);
     document.getElementById(taskElement.dataset.taskColumn).appendChild(taskElement);
@@ -74,6 +93,12 @@ tasks.forEach(task => {
 /////////////////////////
 const messages = [];
 
+
+/**
+ * Create a message element based on message data.
+ * @param {Object} message - Message object with properties: id, content, author, timestamp.
+ * @returns {HTMLDivElement} - Created message element.
+ */
 function createMessageElement(message) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message';
@@ -91,6 +116,11 @@ function createMessageElement(message) {
     return messageElement;
 }
 
+
+/**
+ * Get a new message ID by finding the maximum existing ID and adding 1.
+ * @returns {number} - New message ID.
+ */
 function getNewMessageId(){
     var max = 0;
     for (var i = 0; i < messages.length; i++) {
@@ -101,6 +131,11 @@ function getNewMessageId(){
     return max+1;
 }
 
+
+
+/**
+ * Fetch messages from the server and update the message list.
+ */
 function fetchMessages(){
     fetch("http://127.0.0.1:5000/get_messages", {
         method: 'POST',
@@ -124,6 +159,8 @@ function fetchMessages(){
     });
 }
 
+
+// Event listener for submitting a new message
 $('.message-form button').on('click', function(event) {
     event.preventDefault();
     const newId = getNewMessageId();
@@ -152,6 +189,8 @@ $('.message-form button').on('click', function(event) {
     }
 });
 
+
+// Iterate through existing messages and update the message list
 messages.forEach(message => {
     document.getElementById("messaging-section").appendChild(createMessageElement(message))
 });
