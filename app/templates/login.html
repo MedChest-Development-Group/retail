@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <title> My retail strategies Homepage</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/login.css') }}">
     <meta name="description" content="My retail strategies page" />
 </head>
 
@@ -19,11 +19,12 @@
         </div>
         <div class="login-form-div center">
             <h1 class="center">Portal Login</h1>
-            <form class="login-form center">
+            <form id="loginForm" class="login-form center">
                 <label for="user">Username:</label>
                 <input type="username" name="user" id="username">
                 <label for="pass">Password:</label>
                 <input type="password" name="pass" id="password">
+                <input type="submit" style="display: none;">
                 <button type="button" id="loginButton">Log In</button>
             </form>
         </div>
@@ -32,6 +33,31 @@
 
 <script>
     document.getElementById('loginButton').addEventListener('click', function() {
+        var loginJSON = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        };
+        var loginData = JSON.stringify(loginJSON);
+        fetch("http://127.0.0.1:5000/auth", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: loginData
+        })
+        .then(response => response.json()) // You can handle the server's response here
+        .then(data => {
+            // Handle the response from the server, e.g., display a success message or redirect to a new page.
+            window.location = data.window;
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch.
+            console.error('Error:', error);
+        });
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
         var loginJSON = {
             username: document.getElementById("username").value,
             password: document.getElementById("password").value

@@ -1,0 +1,89 @@
+.title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    padding: 1em;
+}
+
+.logout-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.horizontal-container {
+    display: flex;
+    padding: 1em;
+}
+
+.section-container {
+    color: #f6f5f6;
+    background-color: #363948;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-radius: 8px;
+    height: 100%;
+}
+
+.underlined-heading {
+    border-bottom: 2px solid #78be20;
+    padding: 5px;
+}
+
+.client-selector{
+    background-color:#363948;
+    width: 100%;
+}
+
+#uploadBox, #uploadSubmit {
+    background-color:#363948
+}
+
+.delete {
+    background-color: #363948; /* Green background color */
+    color: red; /* White text color */
+    border: none; /* Remove border */
+    border-radius: 5px;
+    /* padding: 5px 10px; Add padding */
+    cursor: pointer; /* Add cursor pointer on hover */
+    float:right;
+}
+
+.listed-file, .listed-file:hover{
+    color:rgb(255, 255, 255);
+}
+
+.files-list-large{
+    padding: 2%;
+    height: 69%;
+    /* height: 185px; */
+    width: 100%;
+    overflow-y: scroll;
+    border:1px solid #78be20;
+    
+}
+/* issue when window is half width */
+/* due to the heading overflowing vertically */
+.files-list-long{
+    padding: 2%;
+    /* max */
+    /* height: 385px; */
+    height:82%;
+
+    width: 100%;
+    overflow-y: scroll;
+    border:1px solid #78be20;
+    
+}
+
+.files-list{
+    padding: 2%;
+    max-height: 100px;
+    width: 100%;
+    overflow-y: scroll;
+    border:1px solid #78be20;
+    
+}
