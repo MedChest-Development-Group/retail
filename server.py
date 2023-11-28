@@ -73,7 +73,21 @@ users_connection.commit()
 users_cursor.close()
 
 
-# User DB Accesor Methods
+
+
+
+
+
+"""
+Retrieve data from the 'users' table based on specified attributes and condition.
+
+Parameters:
+- attribs (str): Comma-separated string of attribute names to be retrieved.
+- condition (str, optional): SQL condition to filter the results. Default is None.
+
+Returns:
+- list: List of tuples representing the query results.
+"""
 def select_from_users(attribs, condition):
     users_cursor = users_connection.cursor()
     if condition != None:
@@ -85,6 +99,26 @@ def select_from_users(attribs, condition):
     return query_results
 
 
+
+
+
+
+
+
+
+
+
+"""
+Insert a new user into the 'users' table.
+
+Parameters:
+- first_name (str): First name of the user.
+- last_name (str): Last name of the user.
+- user_type (str): Type of the user (e.g., 'admin', 'regular').
+- username (str): Unique username for the user.
+- password (str): Password for the user (hashed using SHA-256 with salt).
+- cityID (int): ID of the city to which the user belongs.
+"""
 def insert_into_users(first_name, last_name, user_type, username, password, cityID):
     users_cursor = users_connection.cursor()
     query = f'INSERT INTO users(id,first_name,last_name,user_type,username,password, cityID) VALUES (NULL,"{first_name}","{last_name}","{user_type}","{username}","{hashlib.sha256(str.encode(password+"Alittlebitofsaltandpepper.")).hexdigest()}", {cityID})'
@@ -93,12 +127,36 @@ def insert_into_users(first_name, last_name, user_type, username, password, city
     users_cursor.close()
 
 
+
+
+
+
+
+
+
+
+
+"""
+Delete user(s) from the 'users' table based on the specified condition.
+
+Parameters:
+- condition (str): SQL condition to filter the users to be deleted.
+"""
 def delete_from_users(condition):
     users_cursor = users_connection.cursor()
     query = f"DELETE FROM users WHERE {condition}"
     users_connection.execute(query)
     users_connection.commit()
     users_cursor.close()
+
+
+
+
+
+
+
+
+
 
 
 ##########################################
@@ -120,7 +178,25 @@ tokens_connection.commit()
 tokens_cursor.close()
 
 
-# Token DB Accesor Methods
+
+
+
+
+
+
+
+
+
+"""
+Retrieve data from the 'tokens' table based on specified attributes and condition.
+
+Parameters:
+- attribs (str): Comma-separated string of attribute names to be retrieved.
+- condition (str): SQL condition to filter the results.
+
+Returns:
+- list: List of tuples representing the query results.
+"""
 def select_from_tokens(attribs, condition):
     tokens_cursor = tokens_connection.cursor()
     if condition != None:
@@ -132,6 +208,21 @@ def select_from_tokens(attribs, condition):
     return query_results
 
 
+
+
+
+
+
+
+
+
+"""
+Insert a new token into the 'tokens' table.
+
+Parameters:
+- token (str): The token string.
+- expire_date (int): The expiration date of the token.
+"""
 def insert_into_tokens(token, expire_date):
     tokens_cursor = tokens_connection.cursor()
     query = f'INSERT INTO tokens(token,expire_date) VALUES ("{token}", {expire_date})'
@@ -140,6 +231,20 @@ def insert_into_tokens(token, expire_date):
     tokens_cursor.close()
 
 
+
+
+
+
+
+
+
+
+"""
+Delete token(s) from the 'tokens' table based on the specified condition.
+
+Parameters:
+- condition (str): SQL condition to filter the tokens to be deleted.
+"""
 def delete_from_tokens(condition):
     tokens_cursor = tokens_connection.cursor()
     if condition != None:
@@ -149,6 +254,16 @@ def delete_from_tokens(condition):
     tokens_connection.execute(query)
     tokens_connection.commit()
     tokens_cursor.close()
+
+
+
+
+
+
+
+
+
+
 
 
 ##########################################
@@ -169,7 +284,25 @@ cities_connection.commit()
 cities_cursor.close()
 
 
-# City DB Accesor Methods
+
+
+
+
+
+
+
+
+
+"""
+Retrieve data from the 'cities' table based on specified attributes and condition.
+
+Parameters:
+- attribs (str): Comma-separated string of attribute names to be retrieved.
+- condition (str): SQL condition to filter the results.
+
+Returns:
+- list: List of tuples representing the query results.
+"""
 def select_from_cities(attribs, condition):
     cities_cursor = cities_connection.cursor()
     if condition != None:
@@ -181,6 +314,21 @@ def select_from_cities(attribs, condition):
     return query_results
 
 
+
+
+
+
+
+
+
+
+"""
+Insert a new city into the 'cities' table.
+
+Parameters:
+- city (str): The name of the city.
+- state (str): The state to which the city belongs.
+"""
 def insert_into_cities(city, state):
     cities_cursor = cities_connection.cursor()
     query = (
@@ -191,6 +339,20 @@ def insert_into_cities(city, state):
     cities_cursor.close()
 
 
+
+
+
+
+
+
+
+
+"""
+Delete city(s) from the 'cities' table based on the specified condition.
+
+Parameters:
+- condition (str): SQL condition to filter the cities to be deleted.
+"""
 def delete_from_cities(condition):
     cities_cursor = cities_connection.cursor()
     if condition != None:
@@ -202,6 +364,21 @@ def delete_from_cities(condition):
     cities_cursor.close()
 
 
+
+
+
+
+
+
+
+
+
+"""
+Initialize and return a sorted list of tuples for use in selecting cities.
+
+Returns:
+- list: A list of tuples containing city information.
+"""
 def initialize_client_selector():
     return sorted(
         [
@@ -210,6 +387,16 @@ def initialize_client_selector():
         ],
         key=lambda x: x[1],
     )
+
+
+
+
+
+
+
+
+
+
 
 
 ##########################################
@@ -236,7 +423,24 @@ messages_connection.commit()
 messages_cursor.close()
 
 
-# Message DB Accessor Methods
+
+
+
+
+
+
+
+
+"""
+Retrieve data from the 'messages' table based on specified attributes and condition.
+
+Parameters:
+- attribs (str): Comma-separated string of attribute names to be retrieved.
+- condition (str): SQL condition to filter the results.
+
+Returns:
+- list: List of tuples representing the query results.
+"""
 def select_from_messages(attribs, condition):
     messages_cursor = messages_connection.cursor()
     if condition != None:
@@ -248,6 +452,25 @@ def select_from_messages(attribs, condition):
     return query_results
 
 
+
+
+
+
+
+
+
+
+
+"""
+Insert a new message into the 'messages' table.
+
+Parameters:
+- messageID (int): ID of the message.
+- content (str): The content of the message.
+- cityID (int): ID of the city associated with the message.
+- timestamp (int): Timestamp of when the message was created.
+- author (str): Username of the message author.
+"""
 def insert_into_messages(messageID, content, cityID, timestamp, author):
     messages_cursor = messages_connection.cursor()
     query = f'INSERT INTO messages(messageID, relativeID, content, cityID, timestamp, author) VALUES (NULL, {messageID}, "{content}", {cityID}, {timestamp}, "{author}")'
@@ -256,6 +479,21 @@ def insert_into_messages(messageID, content, cityID, timestamp, author):
     messages_cursor.close()
 
 
+
+
+
+
+
+
+
+
+
+"""
+Delete message(s) from the 'messages' table based on the specified condition.
+
+Parameters:
+- condition (str): SQL condition to filter the messages to be deleted.
+"""
 def delete_from_messages(condition):
     messages_cursor = messages_connection.cursor()
     if condition != None:
@@ -265,6 +503,16 @@ def delete_from_messages(condition):
     messages_connection.execute(query)
     messages_connection.commit()
     messages_cursor.close()
+
+
+
+
+
+
+
+
+
+
 
 
 ##########################################
@@ -293,7 +541,27 @@ files_connection.commit()
 files_cursor.close()
 
 
-# file DB Accessor Methods
+
+
+
+
+
+
+
+
+
+
+
+"""
+Retrieve data from the 'files' table based on specified attributes and condition.
+
+Parameters:
+- attribs (str): Comma-separated string of attribute names to be retrieved.
+- condition (str): SQL condition to filter the results.
+
+Returns:
+- list: List of tuples representing the query results.
+"""
 def select_from_files(attribs, condition):
     files_cursor = files_connection.cursor()
     if condition != None:
@@ -305,6 +573,22 @@ def select_from_files(attribs, condition):
     return query_results
 
 
+
+
+
+
+
+
+
+
+"""
+Insert a new file into the 'files' table.
+
+Parameters:
+- fileHash (str): The hash of the file.
+- filename (str): The name of the file.
+- cityID (int): ID of the city associated with the file.
+"""
 def insert_into_files(fileHash, filename, cityID):
     files_cursor = files_connection.cursor()
     query = f'INSERT INTO files(fileHash, filename, cityID, marketingMaterial) VALUES ("{fileHash}", "{filename}", {cityID}, false)'
@@ -314,6 +598,20 @@ def insert_into_files(fileHash, filename, cityID):
 
 
 
+
+
+
+
+
+
+
+"""
+Update file records in the 'files' table based on specified updates and conditions.
+
+Parameters:
+- updates (str): Comma-separated string of attribute updates.
+- conditions (str): SQL condition to filter the files to be updated.
+"""
 def update_files(updates, conditions):
     files_cursor = files_connection.cursor()
     query = f"UPDATE files SET {updates} WHERE {conditions}"
@@ -323,6 +621,20 @@ def update_files(updates, conditions):
 
 
 
+
+
+
+
+
+
+
+
+"""
+Delete file(s) from the 'files' table based on the specified condition.
+
+Parameters:
+- condition (str): SQL condition to filter the files to be deleted.
+"""
 def delete_from_files(condition):
     files_cursor = files_connection.cursor()
     if condition != None:
@@ -334,7 +646,9 @@ def delete_from_files(condition):
     files_cursor.close()
 
 
-# cards database
+##########################################
+#          Cards Database Setup           #
+##########################################
 cards_connection = sqlite3.connect("cards.db", check_same_thread=False)
 cards_cursor = cards_connection.cursor()
 cards_cursor.execute(
@@ -353,7 +667,24 @@ cards_connection.commit()
 cards_cursor.close()
 
 
-# card DB Accessor Methods
+
+
+
+
+
+
+
+
+"""
+Retrieve data from the 'cards' table based on specified attributes and condition.
+
+Parameters:
+- attribs (str): Comma-separated string of attribute names to be retrieved.
+- condition (str): SQL condition to filter the results.
+
+Returns:
+- list: List of tuples representing the query results.
+"""
 def select_from_cards(attribs, condition):
     cards_cursor = cards_connection.cursor()
     if condition != None:
@@ -365,6 +696,22 @@ def select_from_cards(attribs, condition):
     return query_results
 
 
+
+
+
+
+
+
+
+"""
+Insert a new card into the 'cards' table.
+
+Parameters:
+- cardID (int): ID of the card.
+- content (str): The content of the card.
+- columnID (str): ID of the column to which the card belongs.
+- cityID (int): ID of the city associated with the card.
+"""
 def insert_into_cards(cardID, content, columnID, cityID):
     cards_cursor = cards_connection.cursor()
     query = f'INSERT INTO cards(cardID, relativeID, content, columnID, cityID) VALUES (NULL, {cardID}, "{content}", "{columnID}", {cityID})'
@@ -373,6 +720,20 @@ def insert_into_cards(cardID, content, columnID, cityID):
     cards_cursor.close()
 
 
+
+
+
+
+
+
+
+"""
+Update card records in the 'cards' table based on specified updates and conditions.
+
+Parameters:
+- updates (str): Comma-separated string of attribute updates.
+- condition (str): SQL condition to filter the cards to be updated.
+"""
 def update_in_cards(updates, condition):
     cards_cursor = cards_connection.cursor()
     query = f"UPDATE cards SET {updates} WHERE {condition}"
@@ -381,6 +742,19 @@ def update_in_cards(updates, condition):
     cards_cursor.close()
 
 
+
+
+
+
+
+
+
+"""
+Delete card(s) from the 'cards' table based on the specified condition.
+
+Parameters:
+- condition (str): SQL condition to filter the cards to be deleted.
+"""
 def delete_from_cards(condition):
     cards_cursor = cards_connection.cursor()
     if condition != None:
@@ -392,6 +766,14 @@ def delete_from_cards(condition):
     cards_cursor.close()
 
 
+
+
+
+
+
+
+
+
 # ██████╗ ██╗   ██╗██████╗ ██╗     ██╗ ██████╗    ███████╗ █████╗  ██████╗██╗███╗   ██╗ ██████╗
 # ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝    ██╔════╝██╔══██╗██╔════╝██║████╗  ██║██╔════╝
 # ██████╔╝██║   ██║██████╔╝██║     ██║██║         █████╗  ███████║██║     ██║██╔██╗ ██║██║  ███╗
@@ -399,16 +781,20 @@ def delete_from_cards(condition):
 # ██║     ╚██████╔╝██████╔╝███████╗██║╚██████╗    ██║     ██║  ██║╚██████╗██║██║ ╚████║╚██████╔╝
 # ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝╚═╝  ╚═══╝ ╚═════╝
 app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
+
+
+
 # This allows you to see HTML/CSS changes when you reload the page when you're running and editing the app locally
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+
 
 # Upload files parameters
 UPLOAD_FOLDER_PATH = "app/uploads/"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER_PATH
+
+
 # 10 MB file limit
-
 app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024
-
 
 
 # Configure app to support user sessions
@@ -416,11 +802,36 @@ app.secret_key = os.urandom(32)
 CORS(app)
 
 
+
+
+"""
+Serve the base page of the application.
+
+Endpoint: /
+Method: GET
+
+Returns:
+- Rendered HTML template "login.html", HTTP status code 200
+"""
 @app.route("/", methods=["GET"])
 def base_page():
     return render_template("login.html")
 
 
+
+
+
+
+
+"""
+Serve the favicon.ico file for the application.
+
+Endpoint: /favicon.ico
+Method: GET
+
+Returns:
+- Favicon.ico file from the 'static' directory, HTTP status code 200
+"""
 @app.route("/favicon.ico", methods=["GET"])
 def favicon():
     return send_from_directory(
@@ -430,6 +841,30 @@ def favicon():
     )
 
 
+
+
+
+
+
+
+"""
+Authenticate a user by validating the provided username and password.
+
+Endpoint: /auth
+Method: POST
+
+JSON Request Payload:
+{
+    "username": "user_username",
+    "password": "user_password"
+}
+
+Returns:
+- If authentication is successful:
+    - For city users: {"window": "city"}, HTTP status code 200
+    - For company users: {"window": "company"}, HTTP status code 200
+- If authentication fails: {"window": "failed_auth"}, HTTP status code 200
+"""
 @app.route("/auth", methods=["POST"])
 def auth():
     password = request.get_json().get("password")
@@ -457,6 +892,23 @@ def auth():
         return {"window": "failed_auth"}, 200
 
 
+
+
+
+
+
+
+
+
+"""
+Serve the upload page of the application.
+
+Endpoint: /upload
+Method: GET
+
+Returns:
+- Rendered HTML template "upload.html" with a populated client selector form, HTTP status code 200
+"""
 @app.route("/upload", methods=["GET"])
 def upload():
     form = ClientSelector()
@@ -464,6 +916,32 @@ def upload():
     return render_template("upload.html", form=form)
 
 
+
+
+
+
+
+
+
+"""
+Handle file uploads from company users.
+
+Endpoint: /uploader
+Method: POST
+
+Requires:
+- POST request method
+- Valid session token
+- User is authenticated as a company
+
+Form Data:
+- "file": File to be uploaded
+- "clients": Selected client for the uploaded file
+
+Returns:
+- If upload successful: Redirect to the company page for the selected client
+- If upload fails or unauthorized: Redirect to the login page
+"""
 @app.route("/uploader", methods=["POST"])
 def uploader():
     if (
@@ -489,6 +967,33 @@ def uploader():
     return redirect(url_for(".company", client=request.form.get("clients")))
 
 
+
+
+
+
+
+
+
+
+
+
+"""
+Handle file downloads for company users.
+
+Endpoint: /download/<hash>
+Method: GET
+
+Requires:
+- Valid session token
+- User is authenticated as a company
+
+Parameters:
+- hash (str): Hash value of the file to be downloaded
+
+Returns:
+- If download successful: File download response
+- If download fails or unauthorized: Redirect to the login page
+"""
 @app.route("/download/<hash>")
 def download(hash):
     if token_valid() and "type" in session and session["type"] == "company":
@@ -499,6 +1004,34 @@ def download(hash):
     else:
         return redirect("/")
 
+
+
+
+
+
+
+
+
+
+"""
+Update the marketing material status for a file in a specific city.
+
+Endpoint: /marketingupdate/<hash>/<cityID>/<status>
+Method: GET
+
+Requires:
+- Valid session token
+- User is authenticated as a company
+
+Parameters:
+- hash (str): Hash value of the file
+- cityID (str): ID of the city associated with the file
+- status (str): Updated marketing material status (0 or 1)
+
+Returns:
+- If update successful: Redirect to the company page for the specified city
+- If update fails or unauthorized: Redirect to the login page
+"""
 @app.route("/marketingupdate/<hash>/<cityID>/<status>")
 def marketingUpdate(hash, cityID, status):
     if token_valid() and "type" in session and session["type"] == "company":
@@ -507,6 +1040,32 @@ def marketingUpdate(hash, cityID, status):
     else:
         return redirect("/")
 
+
+
+
+
+
+
+
+
+"""
+Delete a file record associated with a specific hash and city.
+
+Endpoint: /deleter/<hash>/<cityID>
+Method: GET
+
+Requires:
+- Valid session token
+- User is authenticated as a company
+
+Parameters:
+- hash (str): Hash value of the file
+- cityID (str): ID of the city associated with the file
+
+Returns:
+- If deletion successful: Redirect to the company page for the specified city
+- If deletion fails or unauthorized: Redirect to the login page
+"""
 @app.route("/deleter/<hash>/<cityID>")
 def delete(hash, cityID):
     if token_valid() and "type" in session and session["type"] == "company":
@@ -524,6 +1083,25 @@ def delete(hash, cityID):
         return redirect("/")
 
 
+
+
+
+
+
+
+
+
+
+
+"""
+Log out the user by deleting the session token and clearing the session data.
+
+Endpoint: /logout
+Method: GET
+
+Returns:
+- Redirect to the login page after logging out
+"""
 @app.route("/logout", methods=["GET"])
 def logout():
     delete_from_tokens(f'token="{session["token"]}"')
@@ -531,6 +1109,27 @@ def logout():
     return redirect("/")
 
 
+
+
+
+
+
+
+
+"""
+Display the home page for city users, showing uploaded files and marketing material.
+
+Endpoint: /city
+Method: GET
+
+Requires:
+- Valid session token
+- User is authenticated as a city
+
+Returns:
+- If authentication successful: Rendered HTML template "city/home.html" with user and file information
+- If authentication fails or unauthorized: Redirect to the login page
+"""
 @app.route("/city", methods=["GET"])
 def city():
     if token_valid() and "type" in session and session["type"] == "city":
@@ -541,6 +1140,33 @@ def city():
         return redirect("/")
 
 
+
+
+
+
+
+
+
+
+"""
+Display the home page for company users, allowing them to select a client and view uploaded files.
+
+Endpoint: /company
+Methods: GET, POST
+
+Requires:
+- Valid session token
+- User is authenticated as a company
+
+Parameters:
+- client (int): Default client ID to be displayed (optional, default is 1)
+
+Returns:
+- If authentication successful:
+    - GET: Rendered HTML template "company/home.html" with client selector and file information
+    - POST: Rendered HTML template "company/home.html" with updated client selector and file information
+- If authentication fails or unauthorized: Redirect to the login page
+"""
 @app.route("/company", methods=["GET", "POST"])
 def company(client=1):
     form = ClientSelector()
@@ -562,14 +1188,55 @@ def company(client=1):
         return redirect("/")
 
 
+
+
+
+
+
+
+"""
+Redirect to the login page for failed authentication attempts.
+
+Endpoint: /failed_auth
+Method: GET
+
+Returns:
+- Redirect to the login page, HTTP status code 302
+"""
 @app.route("/failed_auth", methods=["GET"])
 def failed_auth():
-    return render_template("error/failed_auth.html")
+    return redirect("/")
+
+
+
+
+
+
+
+
 
 
 #############################
 #  Progress Board Endpoints
 #############################
+
+
+
+
+
+"""
+Retrieve and return cards associated with the current city user.
+
+Endpoint: /get_cards
+Method: POST
+
+Requires:
+- Valid session token
+- User is authenticated as a city
+
+Returns:
+- JSON response containing a list of cards with their IDs, content, and column IDs, HTTP status code 200
+"""
 @app.route("/get_cards", methods=["POST"])
 def get_cards():
     query_results = select_from_cards("relativeID,content,columnID", f'cityID={session["cityID"]}')
@@ -581,6 +1248,31 @@ def get_cards():
     return {"cards": cards}, 200
 
 
+
+
+
+
+
+
+
+"""
+Add a new card for the current city user.
+
+Endpoint: /add_card
+Method: POST
+
+Requires:
+- Valid session token
+- User is authenticated as a city
+
+JSON Payload:
+- "id": ID of the new card
+- "text": Content of the new card
+- "column": ID of the column to which the new card belongs
+
+Returns:
+- Empty response with HTTP status code 200 upon successful addition
+"""
 @app.route("/add_card", methods=["POST"])
 def add_card():
     cardID = request.get_json().get("id")
@@ -590,6 +1282,31 @@ def add_card():
     return make_response("", 200)
 
 
+
+
+
+
+
+
+
+"""
+Update the content and column of an existing card for the current city user.
+
+Endpoint: /update_card
+Method: POST
+
+Requires:
+- Valid session token
+- User is authenticated as a city
+
+JSON Payload:
+- "id": ID of the card to be updated
+- "text": Updated content of the card
+- "column": Updated column ID of the card
+
+Returns:
+- Empty response with HTTP status code 200 upon successful update
+"""
 @app.route("/update_card", methods=["POST"])
 def update_card():
     # Send this endpoint a card with the same ID, but updated content, and it will replace it.
@@ -600,6 +1317,31 @@ def update_card():
     return make_response("", 200)
 
 
+
+
+
+
+
+
+
+"""
+Delete an existing card for the current city user.
+
+Endpoint: /delete_card
+Method: POST
+
+Requires:
+- Valid session token
+- User is authenticated as a city
+
+JSON Payload:
+- "id": ID of the card to be deleted
+- "text": Content of the card to be deleted (optional)
+- "column": Column ID of the card to be deleted (optional)
+
+Returns:
+- Empty response with HTTP status code 200 upon successful deletion
+"""
 @app.route("/delete_card", methods=["POST"])
 def delete_card():
     cardID = request.get_json().get("id")
@@ -610,9 +1352,41 @@ def delete_card():
 
 
 
+
+
+
+
+
+
+
+
 #############################
 #  Messaging Endpoints
-#############################    
+############################# 
+
+
+
+
+
+"""
+Add a new message to the messages database for the current city user.
+
+Endpoint: /add_message
+Method: POST
+
+Requires:
+- Valid session token
+- User is authenticated as a city
+
+JSON Payload:
+- "id": ID of the new message
+- "content": Content of the new message
+- "author": Author of the new message
+- "timestamp": Timestamp of the new message
+
+Returns:
+- Empty response with HTTP status code 200 upon successful addition
+"""
 @app.route('/add_message', methods=["POST"])
 def add_message():
     messageID = request.get_json().get('id')
@@ -622,6 +1396,26 @@ def add_message():
     insert_into_messages(messageID, content, session["cityID"], timestamp, author)
     return make_response('',200)
 
+
+
+
+
+
+
+
+"""
+Retrieve and return messages associated with the current city user.
+
+Endpoint: /get_messages
+Method: POST
+
+Requires:
+- Valid session token
+- User is authenticated as a city
+
+Returns:
+- JSON response containing a list of messages with their IDs, content, author, and timestamp, HTTP status code 200
+"""
 @app.route('/get_messages', methods=["POST"])
 def get_messages():
     query_results = select_from_messages("relativeID,content,author,timestamp", f'cityID={session["cityID"]}')
@@ -632,15 +1426,44 @@ def get_messages():
         messages.append(json_object)
     return {'messages': messages}, 200
 
+
+
+
+
+
+
+
+
 #############################
 #  Token Validator
 #############################
+
+
+
+"""
+Check if the current session token is valid by querying the tokens database.
+
+Requires:
+- Valid session token stored in the session object
+
+Returns:
+- True if the session token is found in the tokens database, False otherwise
+"""
 def token_valid():
     try:
         query_results = select_from_tokens("token", f'token="{session["token"]}"')
         return True if len(query_results) > 0 else False
     except:
         return False
+
+
+
+
+
+
+
+
+
 
 
 #  █████╗ ██████╗ ███╗   ███╗██╗███╗   ██╗
@@ -653,6 +1476,18 @@ def token_valid():
 appAdmin = Flask(__name__, template_folder="app/templates", static_folder="app/static")
 
 
+
+
+
+"""
+Retrieve all user and city data for display on the admin page.
+
+Endpoint: /admin
+Method: GET
+
+Returns:
+- Rendered HTML template "admin/dashboard.html" with user and city data, HTTP status code 200
+"""
 @appAdmin.route("/", methods=["GET"])
 def admin_page():
     """
@@ -676,6 +1511,36 @@ def admin_page():
     return render_template("admin/dashboard.html", users=users, cities=cities)
 
 
+
+
+
+
+
+
+
+
+"""
+Create a new user and associated city if necessary, based on form data.
+
+Endpoint: /admin/create_user
+Methods: GET (render the form), POST (process form submission)
+
+Requires:
+- Form data containing:
+    - "first_name": First name of the new user
+    - "last_name": Last name of the new user
+    - "user_type": Type of the new user
+    - "username": Username of the new user
+    - "password": Password of the new user
+    - "city": City of the new user
+    - "state": State of the new user
+
+Returns:
+- If POST request:
+    - Redirect to the admin page upon successful user and city creation
+- If GET request:
+    - Render the HTML template "admin/create_user.html" for user input
+"""
 @appAdmin.route("/create_user", methods=["GET", "POST"])
 def create_user():
     if request.method == "POST":
@@ -702,6 +1567,13 @@ def create_user():
     return render_template("admin/create_user.html")
 
 
+
+
+
+
+
+
+
 # ██╗    ██╗███████╗██████╗     ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗
 # ██║    ██║██╔════╝██╔══██╗    ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗
 # ██║ █╗ ██║█████╗  ██████╔╝    ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝
@@ -710,14 +1582,25 @@ def create_user():
 #  ╚══╝╚══╝ ╚══════╝╚═════╝     ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝
 
 
+
+"""
+Run the Flask application for the public page.
+"""
 def run_public_page():
     app.run(debug=False, port=5000)
 
 
+
+"""
+Run the Flask application for the admin page.
+"""
 def run_admin_page():
     appAdmin.run(debug=False, port=8123)
 
 
+"""
+Periodically clean up expired tokens from the tokens database.
+"""
 def token_watchdog():
     while True:
         # print("Token Cleanup")
@@ -727,16 +1610,25 @@ def token_watchdog():
         time.sleep(60)
 
 
-# https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python#1112350
+
+"""
+Catches the Ctrl-C Signal in the main thread so that all threads stop at same time.
+https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python#1112350
+"""
 def signal_handler(sig, frame):
     sys.exit(0)
 
 
 if __name__ == "__main__":
+    # Clean up any existing tokens in the tokens database
     delete_from_tokens(None)
+
+    # Create and start threads for the public page, admin page, and token watchdog
     threads.append(threading.Thread(target=run_public_page))
     threads.append(threading.Thread(target=run_admin_page))
     threads.append(threading.Thread(target=token_watchdog))
     for i in threads:
         i.start()
+
+    # Register a signal handler for the SIGINT signal (Ctrl+C)
     signal.signal(signal.SIGINT, signal_handler)
