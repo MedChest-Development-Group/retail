@@ -74,6 +74,12 @@ html {
     margin-bottom: 10px;
 }
 
+.card-count {
+    margin-left: 10px; /* Adjust the margin as needed */
+    font-weight: bold; /* Style the card count font as needed */
+    color: #d8d8d8; /* Customize the color of the card count */
+}
+
 .task {
     color: #363948;
     background-color: #f6f5f6; /* White background color */
@@ -95,6 +101,7 @@ html {
     padding: 2px;
     background-color: #525562;
     z-index: 1;
+    line-height: 1; /* Adjust the line-height as needed */
 }
 
 .button-with-padding {
@@ -147,6 +154,7 @@ html {
 .message-context {
     font-size: smaller;
     padding-left: 1%;
+    padding-top: 4px;
     border-top: 2px solid #78be20;
 }
 

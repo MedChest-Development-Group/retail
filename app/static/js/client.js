@@ -32,11 +32,26 @@ function fetchCards(){
             const taskElement = createTaskElement(task);
             document.getElementById(taskElement.dataset.taskColumn).appendChild(taskElement);
         }
+
+        // Update card count after fetching cards
+        updateCardCount('inProgressColumn');
+        updateCardCount('wonColumn');
+        updateCardCount('lostColumn');
     })
     .catch(error => {
         // Handle any errors that occur during the fetch.
         console.error('Error:', error);
     });
+}
+
+function updateCardCount(columnId) {
+    const column = document.getElementById(columnId);
+    const cardCount = column.querySelectorAll('.task').length;
+    const cardCountSpan = column.querySelector('.card-count');
+
+    if (cardCountSpan) {
+        cardCountSpan.textContent = cardCount;
+    }
 }
 
 tasks.forEach(task => {
