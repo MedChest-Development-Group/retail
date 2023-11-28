@@ -551,12 +551,13 @@ def company(client=1):
         form.clients.default = request.args["client"]
     else:
         form.clients.default = client
-
+    
+    session["cityID"] = form.clients.default
     form.process()
     files = sorted(select_from_files("*", f"cityID = {form.clients.default}"))
 
     if token_valid() and "type" in session and session["type"] == "company":
-        return render_template('company/home.html', form=form, files=files)
+        return render_template('company/home.html', form=form, files=files, first_name=session["first_name"], last_name=session["last_name"])
     else:
         return redirect("/")
 
