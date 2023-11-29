@@ -1,0 +1,100 @@
+.login-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+}
+
+.welcome-banner {
+    position: fixed;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    lefT: 0;
+    bottom: 0;
+    top: 0;
+    min-height: 100vh;
+    min-width: 60%;
+    max-width: 60%;
+    /*background-color: var(--retail-green);*/
+    background-image: url('../imgs/bham.jpg');
+    background-size: cover; /* Adjust as needed */
+    background-repeat: no-repeat; /* Adjust as needed */
+    background-position: center center; /* Adjust as needed */
+    font-family: 'Lobster', sans-serif;
+    text-align: center;
+    align-items: center;
+    /* border-bottom-right-radius: 5%;
+    border-top-right-radius: 5%; */
+}
+
+.portal-rule {
+    /* Set the image path */
+    background-image: url('../imgs/PORTAL.png');
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    /* Make the image transparent */
+    opacity: 0.93; /* Adjust the value between 0 (completely transparent) and 1 (completely opaque)
+
+    /* Set background properties for the image */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+    /* Set rounded corners */
+    border-radius: 15px; /* Adjust the value for the desired corner radius */
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 45%;
+    height: 35%;
+}
+
+.login-form-div {
+    left: 60%;
+    width: 40%;
+    min-height: 100vh;
+    position: absolute;
+    display: flex;
+    flex-direction: column; /* This will stack the children vertically */
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+input#username, input#password {
+    width: 60%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+button#loginButton {
+    width: 60%;
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button#loginButton:hover {
+    background-color: #45a049;
+}

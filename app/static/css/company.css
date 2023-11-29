@@ -1,15 +1,3 @@
-/* Import fonts */
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
-    line-height: 1.5;
-}
-
-html {
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
 .title-container {
     display: flex;
     align-items: center;
@@ -22,11 +10,6 @@ html {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.content-container {
-    padding-left: 4em;
-    padding-right: 4em;
 }
 
 .horizontal-container {
@@ -42,12 +25,67 @@ html {
     padding-left: 1em;
     padding-right: 1em;
     border-radius: 8px;
-    height: 100%;
+
 }
 
 .underlined-heading {
     border-bottom: 2px solid #78be20;
     padding: 5px;
+}
+
+.client-selector{
+    background-color:#363948;
+    width: 100%;
+}
+
+#uploadBox, #uploadSubmit {
+    background-color:#363948
+}
+
+.delete {
+    background-color: #363948; /* Green background color */
+    color: red; /* White text color */
+    border: none; /* Remove border */
+    border-radius: 5px;
+    /* padding: 5px 10px; Add padding */
+    cursor: pointer; /* Add cursor pointer on hover */
+    float:right;
+}
+
+.listed-file, .listed-file:hover{
+    color:rgb(255, 255, 255);
+}
+
+.files-list-large{
+    padding: 2%;
+    height: 69%;
+    /* height: 185px; */
+    width: 100%;
+    overflow-y: scroll;
+    border:1px solid #78be20;
+    
+}
+/* issue when window is half width */
+/* due to the heading overflowing vertically */
+.files-list-long{
+    padding: 2%;
+    /* max */
+    /* height: 385px; */
+    height:82%;
+
+    width: 100%;
+    overflow-y: scroll;
+    border:1px solid #78be20;
+    
+}
+
+.files-list{
+    padding: 2%;
+    max-height: 100px;
+    width: 100%;
+    overflow-y: scroll;
+    border:1px solid #78be20;
+    
 }
 
 .board {
@@ -74,12 +112,6 @@ html {
     margin-bottom: 10px;
 }
 
-.card-count {
-    margin-left: 10px; /* Adjust the margin as needed */
-    font-weight: bold; /* Style the card count font as needed */
-    color: #d8d8d8; /* Customize the color of the card count */
-}
-
 .task {
     color: #363948;
     background-color: #f6f5f6; /* White background color */
@@ -101,11 +133,10 @@ html {
     padding: 2px;
     background-color: #525562;
     z-index: 1;
-    line-height: 1; /* Adjust the line-height as needed */
 }
 
 .button-with-padding {
-    padding: 5px; /* Adjust the value according to your preference */
+    padding: 2px;
     margin: 2px;
 }
 
@@ -154,8 +185,10 @@ html {
 .message-context {
     font-size: smaller;
     padding-left: 1%;
-    padding-top: 4px;
     border-top: 2px solid #78be20;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .messaging-section {

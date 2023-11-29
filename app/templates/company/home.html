@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import render_field %}
 {% block content %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/company.css') }}">
+</head>
+<script>
+    const currentAuthor = "{{ first_name }}"+" "+"{{ last_name }}";
+</script>
 <div class="title-container">
     <i></i>
     <h1>Retail Strategies's Homepage</h1>
@@ -55,21 +61,53 @@
 <div>
     <div class="horizontal-container">
     <!-- <div class="client-placeholder-horizontal-container"> -->
-        <div class="section-container" style="width: 50%; min-height: 600px;">
-            <h2 class="underlined-heading">Graph here</h2>
+        <div class="section-container" style="width: 70%; min-height: 600px;">
+            <h2 class="underlined-heading">Progress Board</h2>
+            <!-- Progress Board Widget -->
+            <div class="board">
+                <div class="column" id="inProgressColumn">
+                    <div class="column-header">
+                        <header>In Progress</header>
+                        <button class="btn btn-success"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="column" id="wonColumn">
+                    <div class="column-header">
+                        <header>Won</header>
+                        <button class="btn btn-success"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="column" id="lostColumn">
+                    <div class="column-header">
+                        <header>Lost</header>
+                        <button class="btn btn-success"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="section-container" style="width: 50%; min-height: 600px;">
+        <div class="section-container" style="width: 30%; min-height: 600px;">
             <h2 class="underlined-heading">Test</h2>
         </div>
         <!-- </div> -->
     </div>
     <div class="horizontal-container">
-        <div class="section-container" style="width: 50%; min-height: 600px;">
-            <h2 class="underlined-heading">Graph here</h2>
+        <div class="section-container" style="width: 70%; min-height: 600px;">
+            <!-- Should be messenger -->
+            <h2 class="underlined-heading">Messenger</h2>
+            <div class="messages">
+                <div id="messaging-section" class="messaging-section">
+                    
+                </div>
+                <form class="message-form">
+                    <textarea id="message" name="message" rows="2" cols="50" required></textarea>
+                    <button class="button">Submit</button>
+                </form>
+            </div>
         </div>
-        <div class="section-container" style="width: 50%; min-height: 600px;">
+        <div class="section-container" style="width: 30%; min-height: 600px;">
             <h2 class="underlined-heading">Test</h2>
         </div>
     </div>
 </div>
+<script src="../../static/js/company.js"></script>
     {% endblock %}

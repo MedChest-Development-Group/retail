@@ -1,10 +1,13 @@
 <!-- Quick testing version here - Michael -->
 {% extends "base.html" %}
 {% block content %}
-    <h1 class="admin-title center">Admin Dashboard</h1>
-    <h2 class="admin-sub center">Create users</h2>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/admin.css') }}">
+</head>
+    <h1>Admin Dashboard</h1>
+    <h2>Create users</h2>
     <button onclick="location.href='/create_user'" id="createNewUserButton">Add New User</button>
-    <h2 class="admin-sub center">User List</h2>
+    <h2>User List</h2>
     <div class="users-list">
         <table border="1">
             <thead>
@@ -33,7 +36,7 @@
         </table>
     </div>
     <br>
-    <h2 class="admin-sub center">City List</h2>
+    <h2>City List</h2>
     <div class="users-list">
         <table border="1">
             <thead>

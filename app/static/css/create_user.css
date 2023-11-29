@@ -1,0 +1,60 @@
+.createUser-container {
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.createUser-form {
+    width: 30%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+input#first_name, 
+input#last_name, 
+input#city, 
+input#state,
+input#username,
+input#password {
+    width: 200%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+#user_type {
+    width: 60%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+input#createUserButton {
+    display: block;
+    width: 60%;
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+input#createUserButton:hover {
+    background-color: #45a049;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
