@@ -98,16 +98,6 @@ def select_from_users(attribs, condition):
     users_cursor.close()
     return query_results
 
-
-
-
-
-
-
-
-
-
-
 """
 Insert a new user into the 'users' table.
 
@@ -126,16 +116,6 @@ def insert_into_users(first_name, last_name, user_type, username, password, city
     users_connection.commit()
     users_cursor.close()
 
-
-
-
-
-
-
-
-
-
-
 """
 Delete user(s) from the 'users' table based on the specified condition.
 
@@ -148,15 +128,6 @@ def delete_from_users(condition):
     users_connection.execute(query)
     users_connection.commit()
     users_cursor.close()
-
-
-
-
-
-
-
-
-
 
 
 ##########################################
@@ -176,16 +147,6 @@ CREATE TABLE IF NOT EXISTS tokens (
 )
 tokens_connection.commit()
 tokens_cursor.close()
-
-
-
-
-
-
-
-
-
-
 
 """
 Retrieve data from the 'tokens' table based on specified attributes and condition.
@@ -208,14 +169,6 @@ def select_from_tokens(attribs, condition):
     return query_results
 
 
-
-
-
-
-
-
-
-
 """
 Insert a new token into the 'tokens' table.
 
@@ -229,15 +182,6 @@ def insert_into_tokens(token, expire_date):
     tokens_connection.execute(query)
     tokens_connection.commit()
     tokens_cursor.close()
-
-
-
-
-
-
-
-
-
 
 """
 Delete token(s) from the 'tokens' table based on the specified condition.
@@ -255,17 +199,6 @@ def delete_from_tokens(condition):
     tokens_connection.commit()
     tokens_cursor.close()
 
-
-
-
-
-
-
-
-
-
-
-
 ##########################################
 #      City Database Setup               #
 ##########################################
@@ -282,16 +215,6 @@ CREATE TABLE IF NOT EXISTS cities (
 )
 cities_connection.commit()
 cities_cursor.close()
-
-
-
-
-
-
-
-
-
-
 
 """
 Retrieve data from the 'cities' table based on specified attributes and condition.
@@ -313,15 +236,6 @@ def select_from_cities(attribs, condition):
     cities_cursor.close()
     return query_results
 
-
-
-
-
-
-
-
-
-
 """
 Insert a new city into the 'cities' table.
 
@@ -337,15 +251,6 @@ def insert_into_cities(city, state):
     cities_connection.execute(query)
     cities_connection.commit()
     cities_cursor.close()
-
-
-
-
-
-
-
-
-
 
 """
 Delete city(s) from the 'cities' table based on the specified condition.
@@ -363,16 +268,6 @@ def delete_from_cities(condition):
     cities_connection.commit()
     cities_cursor.close()
 
-
-
-
-
-
-
-
-
-
-
 """
 Initialize and return a sorted list of tuples for use in selecting cities.
 
@@ -387,15 +282,6 @@ def initialize_client_selector():
         ],
         key=lambda x: x[1],
     )
-
-
-
-
-
-
-
-
-
 
 
 
@@ -422,15 +308,6 @@ CREATE TABLE IF NOT EXISTS messages (
 messages_connection.commit()
 messages_cursor.close()
 
-
-
-
-
-
-
-
-
-
 """
 Retrieve data from the 'messages' table based on specified attributes and condition.
 
@@ -450,16 +327,6 @@ def select_from_messages(attribs, condition):
     query_results = messages_connection.execute(query).fetchall()
     messages_cursor.close()
     return query_results
-
-
-
-
-
-
-
-
-
-
 
 """
 Insert a new message into the 'messages' table.
