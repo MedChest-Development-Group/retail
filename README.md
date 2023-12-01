@@ -8,54 +8,54 @@ These instructions will get your copy of the project up and running on your mach
 
 ### Project Structure
 <p>
-app/
-|   __init__.py
-|   config.py
-|
-└───blueprints/
-|   |   __init__.py
-|   ├───admin/
-|   └───city/
-|
-└───models/
-|   |   __init__.py
-|   |   client_selector.py
-|   |   city_user.py
-|   |   company_user.py
-|   |   uploads.py
-|
-└───static/
-|   ├───css/
-|   ├───favicon_io/
-|   ├───imgs/
-|   ├───js/
-|   |   favicon.png
-|   |   old_favicon.ico
-|
-└───templates/
-    ├───admin/
-    ├───city/
-    ├───company/
-    ├───error/
-    |   _formhelpers.html
-    |   base.html
-    |   login.html
-    |   upload.html
-
-.env/
-.gitignore
-cards.db
-cities.db
-code-archive.txt
-files.db
-messages.db
-README.md
-requirements.pdf
-requirements.txt
-server.py
-TODO.md
-tokens.db
-users.db
+app/<br>
+|   __init__.py<br>
+|   config.py<br>
+|<br>
+└───blueprints/<br>
+|   |   __init__.py<br>
+|   ├───admin/<br>
+|   └───city/<br>
+|<br>
+└───models/<br>
+|   |   __init__.py<br>
+|   |   client_selector.py<br>
+|   |   city_user.py<br>
+|   |   company_user.py<br>
+|   |   uploads.py<br>
+|<br>
+└───static/<br>
+|   ├───css/<br>
+|   ├───favicon_io/<br>
+|   ├───imgs/<br>
+|   ├───js/<br>
+|   |   favicon.png<br>
+|   |   old_favicon.ico<br>
+|<br>
+└───templates/<br>
+    ├───admin/<br>
+    ├───city/<br>
+    ├───company/<br>
+    ├───error/<br>
+    |   _formhelpers.html<br>
+    |   base.html<br>
+    |   login.html<br>
+    |   upload.html<br>
+<br>
+.env/<br>
+.gitignore<br>
+cards.db<br>
+cities.db<br>
+code-archive.txt<br>
+files.db<br>
+messages.db<br>
+README.md<br>
+requirements.pdf<br>
+requirements.txt<br>
+server.py<br>
+TODO.md<br>
+tokens.db<br>
+users.db<br>
 </p>
 
 * The `blueprints` folder was meant to hold the routes, this is useful for changing the program to be more modular in the future
