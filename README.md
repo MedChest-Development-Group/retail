@@ -8,49 +8,54 @@ These instructions will get your copy of the project up and running on your mach
 
 ### Project Structure
 app/
-├── __pycache__
-├── blueprints/
-│   ├── admin/
-│   ├── city/
-│   └── __init__.py
-├── models/
-│   ├── __pycache__
-│   ├── __init__.py
-│   ├── client_selector.py
-│   ├── city_user.py
-│   └── company_user.py
-│   └── uploads.py
-├── static/
-│   ├── css/
-│   ├── favicon_io/
-│   ├── imgs/
-│   ├── js/
-│   └── favicon.png
-│   └── old_favicon.ico
-├── templates/
-│   ├── admin/
-│   ├── city/
-│   ├── company/
-│   ├── error/
-│   └── _formhelpers.html
-│   └── base.html
-│   └── login.html
-│   └── upload.html
-├── __init__.py
-├── config.py
-└── env/
-└── .gitignore
-└── cards.db
-└── cities.db
-└── files.db
-└── messages.db
-└── README.md
-└── requirements.pdf
-└── requirements.txt
-└── server.py
-└── TODO.md
-└── tokens.db
-└── users.db
+|   __init__.py
+|   config.py
+|
+└───blueprints/
+|   |   __init__.py
+|   ├───admin/
+|   └───city/
+|
+└───models/
+|   |   __init__.py
+|   |   client_selector.py
+|   |   city_user.py
+|   |   company_user.py
+|   |   uploads.py
+|
+└───static/
+|   ├───css/
+|   ├───favicon_io/
+|   ├───imgs/
+|   ├───js/
+|   |   favicon.png
+|   |   old_favicon.ico
+|
+└───templates/
+    ├───admin/
+    ├───city/
+    ├───company/
+    ├───error/
+    |   _formhelpers.html
+    |   base.html
+    |   login.html
+    |   upload.html
+
+.env/
+.gitignore
+cards.db
+cities.db
+code-archive.txt
+files.db
+messages.db
+README.md
+requirements.pdf
+requirements.txt
+server.py
+TODO.md
+tokens.db
+users.db
+
 
 * The `blueprints` folder was meant to hold the routes, this is useful for changing the program to be more modular in the future
 * The `models` folder holds the code for specific types of users. This folder is mostly unused for now, but can be expanded on in the future if you need a specific type of user to hold specific structures.
