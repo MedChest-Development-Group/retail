@@ -7,6 +7,7 @@ The Retail Strategies Portal is a portal dashboard made by Dylan Calvin, Betty C
 These instructions will get your copy of the project up and running on your machine for development, semi-production and testing purposes.
 
 ### Project Structure
+<p>
 app/
 |   __init__.py
 |   config.py
@@ -55,7 +56,7 @@ server.py
 TODO.md
 tokens.db
 users.db
-
+</p>
 
 * The `blueprints` folder was meant to hold the routes, this is useful for changing the program to be more modular in the future
 * The `models` folder holds the code for specific types of users. This folder is mostly unused for now, but can be expanded on in the future if you need a specific type of user to hold specific structures.
