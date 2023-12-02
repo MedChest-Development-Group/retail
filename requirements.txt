@@ -1,3 +1,13 @@
 flask
-flask-cors
-flask-wtf
+flask_wtf
+flask_cors
+hashlib
+werkzeug.utils
+threading
+sqlite3
+hashlib
+datetime
+time
+os
+signal
+sys
